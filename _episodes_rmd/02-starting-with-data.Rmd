@@ -41,7 +41,49 @@ library(tidyverse)
 
 ## Lists
 
+Vectors can only contain one type of data.
 
+But what if we want to have a data structure that can contain more than one 
+type of data?
+
+That data structure is called a list. 
+
+Lists can contain any kind of data:
+
+```{r}
+my_list <- list("a", 1, T)
+my_list
+```
+Even other lists, or dataframes:
+```{r}
+my_complicated_list <- list(my_list, 47)
+my_complicated_list
+```
+We could even keep dataframes in lists, but that gets messy when we print it out.
+
+From the output, we get an indication on how to subset elements from a list:
+
+```{r}
+my_complicated_list[2]
+```
+The result is a list, if we want to get the content of this list element, we
+use double brackets:
+```{r}
+my_complicated_list[[2]]
+```
+Elements of a list can be named:
+```{r}
+my_named_list <- list("number" = 1, "charachter" = "a", "list" = my_list)
+my_named_list
+```
+
+Now we can subset the list using names:
+```{r}
+my_named_list$charachter
+```
+
+The structure of lists make them cumbersome to work with, but for some purposes they are,
+as we shall see, very useful!
 
 ## Formatting Dates
 
