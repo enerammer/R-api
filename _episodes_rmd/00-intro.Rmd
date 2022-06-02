@@ -5,15 +5,16 @@ exercises: 5
 questions:
 - "What should I remember about R?"
 - "Is this an introduction to R?"
+- "Hvilke emner skal vi lige supplere med relativt til introer?"
 objectives:
-- "Install latest version of R."
-- "Install latest version of RStudio."
-- "Navigate the RStudio GUI."
-- "Install additional packages using the packages tab."
-- "Install additional packages using R code."
+- "Adjust expectations to required knowledge"
+- "Get acquanted with factors, dates and lists"
+- "Install additional packages"
 keypoints:
-- "Use RStudio to write and run R programs."
-- "Use `install.packages()` to install packages (libraries)."
+- "This course builds on previous courses and is not suitable for absolute beginners."
+- "lists"
+- "factors"
+- "dates"
 source: Rmd
 ---
 
@@ -26,7 +27,7 @@ source("../bin/download_data.R")
 ## This is not an introduction to R
 
 This course assumes a certain level of knowledge about R. We are not going
-to cover the basics, and you expected to know how to use the following functionalities in R before starting this course.
+to cover the basics, and you are expected to know how to use the following functionalities in R before starting this course.
 
 - Have R and R-studio installed. 
   Alternatively run everything on rstudio.cloud
@@ -54,6 +55,8 @@ If any of these topics are unfamiliar, we strongly recommend that you either tak
 
 
 We are going to use the library **`danstat`**. Please install by running this command:
+
+også zoo. Og tidyverse. men det har du jo allerede installeret...
 ```{r, eval = FALSE}
 install.packages("danstat")
 ```
