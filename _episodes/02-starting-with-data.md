@@ -29,444 +29,173 @@ source: Rmd
 ---
 
 # no no no. You should also know this!
-
+Two concepts of some importance working with the apis we are using as examples in this course, are not typically covered in our introductory courses to R.
 
 
 
 ~~~
 library(tidyverse)
+~~~
+{: .language-r}
 
-interviews <- read_csv("../data/SAFI_clean.csv", na = "NULL")
+
+## Lists
+
+Vectors can only contain one type of data.
+
+But what if we want to have a data structure that can contain more than one 
+type of data?
+
+That data structure is called a list. 
+
+Lists can contain any kind of data:
+
+
+~~~
+my_list <- list("a", 1, T)
+my_list
 ~~~
 {: .language-r}
 
 
 
 ~~~
-Error: '../data/SAFI_clean.csv' does not exist in current working directory ('/home/runner/work/R-api/R-api/_episodes_rmd').
+[[1]]
+[1] "a"
+
+[[2]]
+[1] 1
+
+[[3]]
+[1] TRUE
 ~~~
-{: .error}
-
-## Factors
-
-R has a special data class, called factor, to deal with categorical data that
-you may encounter when creating plots or doing statistical analyses. Factors are
-very useful and actually contribute to making R particularly well suited to
-working with data. So we are going to spend a little time introducing them.
-
-Factors represent categorical data. They are stored as integers associated with
-labels and they can be ordered (ordinal) or unordered (nominal). Factors
-create a structured  relation between the different levels (values) of a
-categorical variable, such as days of the week or responses to a question in
-a survey. This can make it easier to see how one element relates to the
-other elements in a column. While factors look (and often behave) like
-character vectors, they are actually treated as integer vectors by `R`. So
-you need to be very careful when treating them as strings.
-
-Once created, factors can only contain a pre-defined set of values, known as
-*levels*. By default, R always sorts levels in alphabetical order. For
-instance, if you have a factor with 2 levels:
-
+{: .output}
+Even other lists, or dataframes:
 
 ~~~
-respondent_floor_type <- factor(c("earth", "cement", "cement", "earth"))
-~~~
-{: .language-r}
-
-R will assign `1` to the level `"cement"` and `2` to the level `"earth"`
-(because `c` comes before `e`, even though the first element in this vector is
-`"earth"`). You can see this by using the function `levels()` and you can find
-the number of levels using `nlevels()`:
-
-
-~~~
-levels(respondent_floor_type)
+my_complicated_list <- list(my_list, 47)
+my_complicated_list
 ~~~
 {: .language-r}
 
 
 
 ~~~
-[1] "cement" "earth" 
+[[1]]
+[[1]][[1]]
+[1] "a"
+
+[[1]][[2]]
+[1] 1
+
+[[1]][[3]]
+[1] TRUE
+
+
+[[2]]
+[1] 47
+~~~
+{: .output}
+We could even keep dataframes in lists, but that gets messy when we print it out.
+
+From the output, we get an indication on how to subset elements from a list:
+
+
+~~~
+my_complicated_list[2]
+~~~
+{: .language-r}
+
+
+
+~~~
+[[1]]
+[1] 47
+~~~
+{: .output}
+The result is a list, if we want to get the content of this list element, we
+use double brackets:
+
+~~~
+my_complicated_list[[2]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] 47
+~~~
+{: .output}
+Elements of a list can be named:
+
+~~~
+my_named_list <- list("number" = 1, "charachter" = "a", "list" = my_list)
+my_named_list
+~~~
+{: .language-r}
+
+
+
+~~~
+$number
+[1] 1
+
+$charachter
+[1] "a"
+
+$list
+$list[[1]]
+[1] "a"
+
+$list[[2]]
+[1] 1
+
+$list[[3]]
+[1] TRUE
 ~~~
 {: .output}
 
-
+Now we can subset the list using names:
 
 ~~~
-nlevels(respondent_floor_type)
+my_named_list$charachter
 ~~~
 {: .language-r}
 
 
 
 ~~~
-[1] 2
+[1] "a"
 ~~~
 {: .output}
 
-Sometimes, the order of the factors does not matter. Other times you might want
-to specify the order because it is meaningful (e.g., "low", "medium", "high").
-It may improve your visualization, or it may be required by a particular type of
-analysis. Here, one way to reorder our levels in the `respondent_floor_type`
-vector would be:
-
-
-~~~
-respondent_floor_type # current order
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] earth  cement cement earth 
-Levels: cement earth
-~~~
-{: .output}
-
-
-
-~~~
-respondent_floor_type <- factor(respondent_floor_type, 
-                                levels = c("earth", "cement"))
-
-respondent_floor_type # after re-ordering
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] earth  cement cement earth 
-Levels: earth cement
-~~~
-{: .output}
-
-In R's memory, these factors are represented by integers (1, 2), but are more
-informative than integers because factors are self describing: `"cement"`,
-`"earth"` is more descriptive than `1`, and `2`. Which one is "earth"? You
-wouldn't be able to tell just from the integer data. Factors, on the other hand,
-have this information built in. It is particularly helpful when there are many
-levels. It also makes renaming levels easier. Let's say we made a mistake and
-need to recode "cement" to "brick".
-
-
-~~~
-levels(respondent_floor_type)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] "earth"  "cement"
-~~~
-{: .output}
-
-
-
-~~~
-levels(respondent_floor_type)[2] <- "brick"
-
-levels(respondent_floor_type)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] "earth" "brick"
-~~~
-{: .output}
-
-
-
-~~~
-respondent_floor_type
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] earth brick brick earth
-Levels: earth brick
-~~~
-{: .output}
-
-So far, your factor is unordered, like a nominal variable. R does not know the
-difference between a nominal and an ordinal variable. You make your factor an
-ordered factor by using the `ordered=TRUE` option inside your factor function.
-Note how the reported levels changed from the unordered factor above to the
-ordered version below. Ordered levels use the less than sign `<` to denote
-level ranking.
-
-
-~~~
-respondent_floor_type_ordered <- factor(respondent_floor_type, 
-                                        ordered = TRUE)
-
-respondent_floor_type_ordered # after setting as ordered factor
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] earth brick brick earth
-Levels: earth < brick
-~~~
-{: .output}
-
-
-### Converting factors
-
-If you need to convert a factor to a character vector, you use
-`as.character(x)`.
-
-
-~~~
-as.character(respondent_floor_type)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] "earth" "brick" "brick" "earth"
-~~~
-{: .output}
-
-Converting factors where the levels appear as numbers (such as concentration
-levels, or years) to a numeric vector is a little trickier. The `as.numeric()`
-function returns the index values of the factor, not its levels, so it will
-result in an entirely new (and unwanted in this case) set of numbers.
-One method to avoid this is to convert factors to characters, and then to
-numbers. Another method is to use the `levels()` function. Compare:
-
-
-~~~
-year_fct <- factor(c(1990, 1983, 1977, 1998, 1990))
-
-as.numeric(year_fct)                     # Wrong! And there is no warning...
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] 3 2 1 4 3
-~~~
-{: .output}
-
-
-
-~~~
-as.numeric(as.character(year_fct))       # Works...
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] 1990 1983 1977 1998 1990
-~~~
-{: .output}
-
-
-
-~~~
-as.numeric(levels(year_fct))[year_fct]   # The recommended way.
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] 1990 1983 1977 1998 1990
-~~~
-{: .output}
-
-Notice that in the recommended `levels()` approach, three important steps occur:
-
-* We obtain all the factor levels using `levels(year_fct)`
-* We convert these levels to numeric values using `as.numeric(levels(year_fct))`
-* We then access these numeric values using the underlying integers of the
-vector `year_fct` inside the square brackets
-
-### Renaming factors
-
-When your data is stored as a factor, you can use the `plot()` function to get a
-quick glance at the number of observations represented by each factor level.
-Let's extract the `memb_assoc` column from our data frame, convert it into a
-factor, and use it to look at the number of interview respondents who were or
-were not members of an irrigation association:
-
-
-~~~
-## create a vector from the data frame column "memb_assoc"
-memb_assoc <- interviews$memb_assoc
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'interviews' not found
-~~~
-{: .error}
-
-
-
-~~~
-## convert it into a factor
-memb_assoc <- as.factor(memb_assoc)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in is.factor(x): object 'memb_assoc' not found
-~~~
-{: .error}
-
-
-
-~~~
-## let's see what it looks like
-memb_assoc
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'memb_assoc' not found
-~~~
-{: .error}
-
-
-
-~~~
-## bar plot of the number of interview respondents who were
-## members of irrigation association:
-plot(memb_assoc)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in plot(memb_assoc): object 'memb_assoc' not found
-~~~
-{: .error}
-
-Looking at the plot compared to the output of the vector, we can see that in
-addition to "no"s and "yes"s, there are some respondents for which the
-information about whether they were part of an irrigation association hasn't
-been recorded, and encoded as missing data. They do not appear on the plot.
-Let's encode them differently so they can counted and visualized in our plot.
-
-
-
-~~~
-## Let's recreate the vector from the data frame column "memb_assoc"
-memb_assoc <- interviews$memb_assoc
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'interviews' not found
-~~~
-{: .error}
-
-
-
-~~~
-## replace the missing data with "undetermined"
-memb_assoc[is.na(memb_assoc)] <- "undetermined"
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in memb_assoc[is.na(memb_assoc)] <- "undetermined": object 'memb_assoc' not found
-~~~
-{: .error}
-
-
-
-~~~
-## convert it into a factor
-memb_assoc <- as.factor(memb_assoc)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in is.factor(x): object 'memb_assoc' not found
-~~~
-{: .error}
-
-
-
-~~~
-## let's see what it looks like
-memb_assoc
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'memb_assoc' not found
-~~~
-{: .error}
-
-
-
-~~~
-## bar plot of the number of interview respondents who were
-## members of irrigation association:
-plot(memb_assoc)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in plot(memb_assoc): object 'memb_assoc' not found
-~~~
-{: .error}
-
+The structure of lists make them cumbersome to work with, but for some purposes they are,
+as we shall see, very useful!
 
 ## Formatting Dates
 
 One of the most common issues that new (and experienced!) R users have is
 converting date and time information into a variable that is appropriate and
-usable during analyses. As a reminder from earlier in this lesson, the best
-practice for dealing with date data is to ensure that each component of your
-date is stored as a separate variable. In our dataset, we have a
-column `interview_date` which contains information about the
-year, month, and day that the interview was conducted. Let's
-convert those dates into three separate columns.
+usable during analyses. 
+
+We (plan to) run an entire course on dates and time in R. For our purposes here, we limit the treatment to simple conversion of time and dates as 
+textstrings to time and date datatypes that R can understand.
+
+
+We are going to be using two libraries. 
+
+* Lubridate which is part of tidyverse, but not loaded by default. Lubridate handles a lot of time-related problems.
+* zoo which is a very comprehensive library handling many different weird time-related problems.
+
+Install, and load the packages:
 
 
 ~~~
-str(interviews)
+install.packages("lubridate")
+install.packages("zoo")
 ~~~
 {: .language-r}
-We are going to use the package **`lubridate`**, which is included in the
-**`tidyverse`** installation but not loaded by default, so we have to load
-it explicitly with `library(lubridate)`.
-
-Start by loading the required package:
 
 
 ~~~
@@ -474,285 +203,237 @@ library(lubridate)
 ~~~
 {: .language-r}
 
-The lubridate function `ymd()` takes a vector representing year, month, and day,
-and converts it to a `Date` vector. `Date` is a class of data recognized by R as
-being a date and can be manipulated as such. The argument that the function
-requires is flexible, but, as a best practice, is a character vector formatted
-as "YYYY-MM-DD".
-
-Let's extract our `interview_date` column and inspect the structure:
 
 
 ~~~
-dates <- interviews$interview_date
-~~~
-{: .language-r}
 
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'interviews' not found
-~~~
-{: .error}
-
-
-
-~~~
-str(dates)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in str(dates): object 'dates' not found
-~~~
-{: .error}
-
-When we imported the data in R, `read_csv()` recognized that this column
-contained date information. We can now use the `day()`, `month()` and  `year()`
-functions to extract this information from the date, and create new columns in
-our data frame to store it:
-
-
-
-~~~
-interviews$day <- day(dates)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in day(dates): object 'dates' not found
-~~~
-{: .error}
-
-
-
-~~~
-interviews$month <- month(dates)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in month(dates): object 'dates' not found
-~~~
-{: .error}
-
-
-
-~~~
-interviews$year <- year(dates)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in year(dates): object 'dates' not found
-~~~
-{: .error}
-
-
-
-~~~
-interviews
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in eval(expr, envir, enclos): object 'interviews' not found
-~~~
-{: .error}
-
-Notice the three new columns at the end of our data frame.
-
-In our example above, the `interview_date` column was read in correctly as a
-`Date` variable but generally that is not the case. Date columns are often read
-in as `character` variables and one can use the `as_date()` function to convert
-them to the appropriate `Date/POSIXct`format.
-
-Let's say we have a vector of dates in character format:
-
-
-~~~
-char_dates <- c("7/31/2012", "8/9/2014", "4/30/2016")
-str(char_dates)
-~~~
-{: .language-r}
-
-
-
-~~~
- chr [1:3] "7/31/2012" "8/9/2014" "4/30/2016"
+Attaching package: 'lubridate'
 ~~~
 {: .output}
 
-We can convert this vector to dates as :
 
 
 ~~~
+The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union
+~~~
+{: .output}
+
+
+
+~~~
+library(zoo)
+~~~
+{: .language-r}
+
+
+
+~~~
+
+Attaching package: 'zoo'
+~~~
+{: .output}
+
+
+
+~~~
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+~~~
+{: .output}
+
+
+Time and dates as we get them from apis will typically come in a variation of these formats:
+
+yyyy-mm-dd
+yyyy-mm-dd hh:mm:ss
+mmmyyyy
+yyyymmm
+yyyyQq
+
+Where yyyy is a year, sometimes with only two digits, mm a month as number, eg 07 for july, dd as a day, eg 22.
+
+mmm covers the special case where eg. jul2022 denotes july 2022, that is not so much a specific date, but a specific month
+
+The same is the case with Qq, where 2022Q1 would denote the first quarter (january 1st to march 31st)
+
+hh is hours, mm minutes and ss seconds. 
+
+And the order of all these elements might be different from data source to data source.
+
+Let us look at some examples, and how to convert them to a consistent format:
+
+Year-month-date:
+
+
+~~~
+ymd("2022-06-20")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20"
+~~~
+{: .output}
+Month-date-year:
+
+~~~
+mdy("06-20-2022")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20"
+~~~
+{: .output}
+The lubridate functions are pretty smart. Even without hyphenation and with shortened year, they convert correctly:
+
+~~~
+mdy("062022")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20"
+~~~
+{: .output}
+You might have guess the pattern:
+
+
+~~~
+ydm("22-20-6")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20"
+~~~
+{: .output}
+
+~~~
+myd("062220")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20"
+~~~
+{: .output}
+En challenge her kunne være fin.
+
+What about time?
+
+given a time:
+
+~~~
+"13:10:47"
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "13:10:47"
+~~~
+{: .output}
+
+Very weird formats of time is not covered:
+
+~~~
+ymd_hms("2022-06-20 13:10:47")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20 13:10:47 UTC"
+~~~
+{: .output}
 as_date(char_dates, format = "%m/%d/%Y")
+
+
+~~~
+as_datetime("2022-06-20 12:14:15 ")
 ~~~
 {: .language-r}
 
 
 
 ~~~
-[1] "2012-07-31" "2014-08-09" "2016-04-30"
+[1] "2022-06-20 12:14:15 UTC"
+~~~
+{: .output}
+Even if it gets extremely weird, we can access specialised functions:
+
+~~~
+parse_date_time("12:20:14:2022:15:06", orders="%H%d%M%Y%S%m")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022-06-20 12:14:15 UTC"
+~~~
+{: .output}
+Read the documentation to get at complete list of codes specifying the order of
+time elements.
+
+Specialised times like months and quarters often come from statistical databases:
+
+
+~~~
+as.yearqtr("2022Q2")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "2022 Q2"
 ~~~
 {: .output}
 
-Argument `format` tells the function the order to parse the characters and
-identify the month, day and year. The format above is the equivalent of 
-mm/dd/yyyy. A wrong format can lead to parsing errors or incorrect results.
-
-For example, observe what happens when we use a lower case y instead of upper
-case Y for the year. 
-
 ~~~
-as_date(char_dates, format = "%m/%d/%y")
+zoo::as.yearmon("jan2022")
 ~~~
 {: .language-r}
 
 
 
 ~~~
-[1] "2020-07-31" "2020-08-09" "2020-04-30"
+[1] "Jan 2022"
+~~~
+{: .output}
+The zoo functions are not qute as smart as the lubridate functions, but we can 
+specify the input format like we did with the very weird examples above:
+
+~~~
+as.yearmon("2022jan", format="%Y%b")
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "Jan 2022"
 ~~~
 {: .output}
 
-Here, the `%y` part of the format stands for a two-digit year instead of a
-four-digit year, and this leads to parsing errors.
-
-Or in the following example, observe what happens when the month and day
-elements of the format are switched.
-
-
-~~~
-as_date(char_dates, format = "%d/%m/%y")
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] NA           "2020-09-08" NA          
-~~~
-{: .output}
-
-Since there is no month numbered 30 or 31, the first and third dates cannot be
-parsed.
-
-We can also use functions `ymd()`, `mdy()` or `dmy()` to convert character
-variables to date.
-
-
-~~~
-mdy(char_dates)
-~~~
-{: .language-r}
-
-
-
-~~~
-[1] "2012-07-31" "2014-08-09" "2016-04-30"
-~~~
-{: .output}
-
-# Wrangling data with dplyr
-
-dplyr is a package that makes wrangling data easier.
-
-We wrangle data when we select, filter and summarise data.
-
-
-The pipe construct makes it easy to string together different
-manipulations of the data:
-
-~~~
-data %>% filter(some logical test on a column)
-~~~
-{: .language-r}
-
-We select a set of columns by using the select function:
-
-
-~~~
-interviews %>% select(village, memb_assoc)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in select(., village, memb_assoc): object 'interviews' not found
-~~~
-{: .error}
-
-We select a set of rows by using the filter function:
-
-
-~~~
-interviews %>% filter(village == "Chirodzo")
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in filter(., village == "Chirodzo"): object 'interviews' not found
-~~~
-{: .error}
-
-We make a new column using the mutate function:
-
-~~~
-interviews %>% mutate(new_column_name = no_membrs * 10)
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in mutate(., new_column_name = no_membrs * 10): object 'interviews' not found
-~~~
-{: .error}
-
-We calculate summary statistics by using the summarize function:
-
-~~~
-interviews %>% summarise(avg_membrs = mean(no_membrs))
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in summarise(., avg_membrs = mean(no_membrs)): object 'interviews' not found
-~~~
-{: .error}
-
-Summary statistics are normally combined with the function group_by:
-
-~~~
-interviews %>% group_by(village) %>% 
-  summarise(avg_membrs = mean(no_membrs))
-~~~
-{: .language-r}
-
-
-
-~~~
-Error in group_by(., village): object 'interviews' not found
-~~~
-{: .error}
-
+Zoo uses the same codes for specifying elements of dates as lubridate.
 
 
 {% include links.md %}
