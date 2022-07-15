@@ -6,16 +6,17 @@ output:
   html_document:
     df_print: paged
 objectives:
-- Understand what an API do
+- Use a package to do the API-calls to Statistics Denmark
 - Connect to Statistics Denmark, and extract data
 - Create a list of lists to control the variables to be extracted
+- Using the danstat package
 
 keypoints: 
-- R Markdown is a useful language for creating reproducible documents combining text and executable R-code.
+- Larger services often provide packages to make it easier to use their API
 
 source: Rmd
 questions:
-- An easier way to access Statistics Denmark
+- Is there an easier way to access Statistics Denmark
 
 ---
 
@@ -34,69 +35,22 @@ that process. We are figuring out what to do about it, but please excuse us
 for any red errors on the pages for the time being.
 
 
-## What is an API?
+## Is there an easier way?
 
-An API is an Application Programming Interface. It is a way of making 
-applications, in our case an R-script, able to communicate with another 
-application, here the Statistics Denmark databases.
+Many larger online services provide packages for easier access to their APIs.
 
-Talking about APIs, we talk about several different things. It can be quite 
-confusing, but dont worry!
+Popular services might not have to do this, because enthusiasts write packages
+themselves.
 
-What we want to be able to do, is to let our own application, our R-script,
-send a command to a remote application, the databases of Statistics Denmark, 
-in order to retrieve specific data.
+A package called `danstat` is available, and makes it easier to extract data from
+Statistics Denmark.
 
-An API defines the different commands we can send, and how the data that we 
-get back, is formatted.
-
-Often APIs will require a user account with a login and a password. 
-Statistics Denmark does not.
-
-The standard way to send a command, or a request, to an API is to use the 
-GET (and POST) functions at the core of the internet. 
-
-In a certain sense this is what we do when we access a website. We go to 
-www.dr.dk/sporten and get a result, the current webpage at the front of 
-the sports section of Danmarks Radio. 
-
-If we instead ask www.dr.dk to return the result of our request for 
-www.dr.dk/nyheder/politik, we will get the current webpage with news on politics.
-
-This is what we do when we access an API. But instead of using our browser, we
-use the method our browser uses (GET), tells that method that we would like 
-some specified information, and get a result that is not a webpage, but rather
-a set of data. Hopefully organised in a way that is easy to read.
-
-Writing our own GET-requests to communicate with an API is not simple. 
-Thankfully kind people have written libraries, some in R, that makes accessing 
-specific APIs easier. The one we are going to use here is called "danstat"
 
 ## The danstat package/library
 
+Previously we retrieved at table with demographic data from Statistics Denmark.
 
-Before doing anything else, it is useful to take a look at the result:
-```{r initial-data, echo = F, message=F}
-variables <- list(list(code = "ieland", values = c(5100, 5128)),
-                  list(code = "køn", values = c(1,2)),
-                  list(code = "tid", values = NA))
-
-data <- get_data("folk1c", variables)
-data %>% head
-```
-
-This is from the table "folk1c" from Statistics Denmark.
-
-We get some variables, IELAND, KØN, and TID. And then the content of the table, 
-INDHOLD. Ie the number of men, living in denmark i the first quarter of 2008 in
-the first line.
-
-How do we get that table?
-
-All tables from Statistics Denmark are organised in a hierarcical tree of 
-subjects. 
-
-Let us begin there.
+How can we get that table using the danstat package?
 
 Before using the library, we need to install it:
 
@@ -111,9 +65,11 @@ library(remotes)
 remotes:install_github("cran/danstat")
 ```
 
-
 After installation, we load the library using the library function. And then 
 we can access the functions included in the library:
+
+The danstat package contain four functions, equivalent to the four endpoints
+we discussed earlier.
 
 The get_subjects() function sends a request to the Statistics Denmark API, asking
 for a list of the subjects. The information is returned to our script, and the
