@@ -99,7 +99,8 @@ subjects
 {: .output}
 
 
-We get the 13 major subjects from Statistics Denmark. Each of them have sub-subjects.
+We get the 13 major subjects from Statistics Denmark we have seen before.
+As before, each of them have sub-subjects.
 
 If we want to take a closer look at the 
 subdivisions of a given subject, we use the get_subjects() function again,
@@ -217,7 +218,7 @@ the subjects of the subjects, and then the subjects of those subjects.
 
 But we ended up with a sub_sub_subject, 
 
-20021	Population figures
+*20021	Population figures*
 
 How do we find out which tables exists in this subject?
 
@@ -349,7 +350,9 @@ What kind of values can the individual datapoints take?
 
 
 ~~~
-metadata %>% slice(4) %>% pull(values)
+metadata %>% 
+  slice(4) %>% 
+  pull(values)
 ~~~
 {: .language-r}
 
@@ -374,7 +377,11 @@ The same trick can be done for the other fields in the table:
 
 
 ~~~
-metadata %>% slice(1) %>% pull(values) %>% .[[1]] %>% head
+metadata %>% 
+  slice(1) %>% 
+  pull(values) %>% 
+  .[[1]] %>% 
+  head
 ~~~
 {: .language-r}
 
@@ -414,17 +421,8 @@ Therefore we need to give the function an argument containing both
 the information that we want the population data broken down by "OMRÅDE", and 
 that we want all values of "OMRÅDE".
 
-
-Vectors are characterized by only being able to contain one type of data.
-
-When we need to have structures that can contain more than one type of data,
-we can use the list structure.
-
-Lists allows us to have values, with names (sometime descriptive).
-
-Lists can even contain lists.
-
-And that is what we need here. Let us make our first list:
+As before, we need to specify what we want using a list. 
+Let us make our first list:
 
 
 ~~~
@@ -458,7 +456,9 @@ That information is stored in the variable "CIVILSTAND".
 And above, we saw that we had the following values in that variable:
 
 ~~~
-metadata %>% slice(4) %>% pull(values)
+metadata %>% 
+  slice(4) %>% 
+  pull(values)
 ~~~
 {: .language-r}
 
@@ -622,3 +622,5 @@ write_csv2(data, "../data/SD_data.csv")
 ~~~
 {: .language-r}
 
+
+{% include links.md %}

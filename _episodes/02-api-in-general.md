@@ -133,9 +133,43 @@ our_body <- list(lang = "en", recursive = FALSE,
                   includeTables = FALSE, subjects = NULL)
 ~~~
 {: .language-r}
-This list contains four elements, with names. The first, `lang`, contains a character vector (lenght 1), containing "en", the language that we want Statistics Denmark to use when returning data.
+This list contains four elements, with names. The first, `lang`, contains a character vector (length 1), containing "en", the language that we want Statistics Denmark to use when returning data.
 
 `recursive` and `includeTables` are logical values, both false. And `subjects` is a special value, NULL. This is not a missing value, there simply isn't anything there. But this nothing does have a name.
+
+callout
+
+Lists are subset in a special way. If we want the 
+first element in `our_body`, we can use the usual bracket notation:
+
+
+~~~
+our_body[1]
+~~~
+{: .language-r}
+
+
+
+~~~
+$lang
+[1] "en"
+~~~
+{: .output}
+If we want the actual value of element 1, we use a double bracket notation:
+
+~~~
+our_body[[1]]
+~~~
+{: .language-r}
+
+
+
+~~~
+[1] "en"
+~~~
+{: .output}
+end callout
+
 
 Now we have the two things we need, an endpoint to send a request, and a body containg what we want returned. 
 
@@ -160,7 +194,7 @@ result
 
 ~~~
 Response [https://api.statbank.dk/v1/subjects]
-  Date: 2022-07-15 11:49
+  Date: 2022-07-18 09:52
   Status: 200
   Content-Type: text/json; charset=utf-8
   Size: 884 B
