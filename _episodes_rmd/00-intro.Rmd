@@ -5,16 +5,12 @@ exercises: 5
 questions:
 - "What should I remember about R?"
 - "Is this an introduction to R?"
-- "Hvilke emner skal vi lige supplere med relativt til introer?"
 objectives:
-- "Adjust expectations to required knowledge"
-- "Get acquanted with factors, dates and lists"
-- "Install additional packages"
+- "Align expectations to required knowledge"
+- "Get an overview of the aims of this course"
 keypoints:
 - "This course builds on previous courses and is not suitable for absolute beginners."
-- "lists"
-- "factors"
-- "dates"
+- "We begin by accessing an API using lowlevel methods, and end by applying them on another API"
 source: Rmd
 ---
 
@@ -35,45 +31,46 @@ to cover the basics, and you are expected to know how to use the following funct
 - know what a function is, and how we pass input and parameters to it
 - be familiar with the %>% operator
 - know the basic verbs from dplyr of the tidyverse:
-  select
-  filter
-  mutate
-  arrange
-  summarise
+    - select
+    - filter
+    - mutate
+    - arrange
+    - summarise
 - be familiar with dataframes
 - know how to install and load packages
+- Know how to comment your code
+- do math on variables
+- Get the concept of vectors
+- subsetting vectors and dataframes
+- logical tests
+- Use NA to encode missing values
+- read in data from a csv/excel
 
-comments
-do math on variables
-Get the concept of vectors
-subsetting vectors and dataframes
-logical tests
-NA
-read in data from a csv/excel
-
-If any of these topics are unfamiliar, we strongly recommend that you either take one of our introductory courses, read up on the curriculum of one of them, or follow one of the many amazing courses you can find online, before taking this course.
+If any of these topics are unfamiliar, we strongly recommend that you either 
+take one of our introductory courses, read up on the curriculum of one of them, 
+or follow one of the many amazing courses you can find online, before taking 
+this course.
 
 
-We are going to use the library **`danstat`**. Please install by running this command:
-
-også zoo. Og tidyverse. men det har du jo allerede installeret...
-```{r, eval = FALSE}
-install.packages("danstat")
-```
-
-If that fails... try this:
-```{r, eval =F}
-install.packages("remotes")
-library(remotes)
-remotes:install_github("cran/danstat")
-```
-
+## New concepts in R
 Three concepts are typically not covered in our introductions.
 
-Factors
-dates
-lists
+- Factors
+- dates
+- lists
 
-So we are starting by taking a look at those.
+We will look at them when we need them.
+
+## What is covered?
+
+We will look at how to extract data from APIs in general, using the API of 
+Statistics Denmark as an example. 
+
+The package *danstat* is introduced. This is provides an easier way to interact
+with Statistics Denmark.
+
+Finally we are using the insights from the first part to extract data from 
+wikidata, the database and API that consolidates information across Wikipedia.
+
 
 {% include links.md %}
