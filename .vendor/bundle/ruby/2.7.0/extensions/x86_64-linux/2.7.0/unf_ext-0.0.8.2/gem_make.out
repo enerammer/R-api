@@ -1,5 +1,5 @@
 current directory: /home/runner/work/R-api/R-api/.vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext
-/opt/hostedtoolcache/Ruby/2.7.6/x64/bin/ruby -I /opt/hostedtoolcache/Ruby/2.7.6/x64/lib/ruby/2.7.0 -r ./siteconf20220718-11195-1sb4hv7.rb extconf.rb
+/opt/hostedtoolcache/Ruby/2.7.6/x64/bin/ruby -I /opt/hostedtoolcache/Ruby/2.7.6/x64/lib/ruby/2.7.0 -r ./siteconf20220719-11999-jvn0gj.rb extconf.rb
 checking for -lstdc++... yes
 creating Makefile
 
@@ -126,5 +126,5 @@ Makefile:256: warning: overriding recipe for target '.m.S'
 :256: warning: ignoring old recipe for target '.m.S'
 Makefile:260: warning: overriding recipe for target 'unf_ext.so'
 :260: warning: ignoring old recipe for target 'unf_ext.so'
-/usr/bin/install -c -m 0755 unf_ext.so ./.gem.20220718-11195-10fn8ur
+/usr/bin/install -c -m 0755 unf_ext.so ./.gem.20220719-11999-1brh2yp
 make[1]: Leaving directory '/home/runner/work/R-api/R-api/.vendor/bundle/ruby/2.7.0/gems/unf_ext-0.0.8.2/ext/unf_ext'
