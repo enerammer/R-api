@@ -79,10 +79,55 @@ data, and returns it to the script.
 
 So - how do we do that?
 
-Looking closer at the illustration above, we can see that we send a
-GET-request to the server. But we are not only asking for at simple
-page, we need to specify some more information. And then we have to use
-a slightly different request to the server, a POST-request.
+Looking closer at the illustration above, we can see that we send a 
+request to the server. That request contains several parts.
+
+The request line. That contains the method we are using to 
+communicate with the server, the adress and path of the server, and the
+information about the version of HTTP we are using to communicate with the
+server.
+
+The header. Headers are meta information about our request. It contains 
+information about who we are, the type of browser we are using and much more.
+
+The body. This is really the message that we are sending to the server. Where
+the request line tells our computer where to we are sending our request, and the
+header provides information about the request, the body is the actual message 
+we are sending to the server.
+
+
+The trick is now to make the API understand what data we would like to get back from it.
+
+Two main types of requests are used when communicating with APIs, and they
+primarily concerns how we tell the API what data we would like.
+
+In a GET request, we encode what we would like returned in the URL. 
+You probably know that way already. 
+
+The URL "https://www.amazon.de/s?k=cthulhu" is asking the amazon.de server
+to search (s?) for the word cthulhu. What we are searching for, is placed 
+directly in the URL.
+
+In a POST request, that information is stored in the body of the request.
+
+
+Almost all APIs use one or both of these methods.
+
+The GET method is intuitively easy to understand, and it is relatively easy to 
+edit the URL to search for something else. On the other hand there are limitations
+to the length of what we are searching for.
+
+The POST method allow us to search for arbitrarily many parameters, and can handle
+many different data types, whereas GET can only handle strings. The POST method
+is also more secure, because the body can be encrypted during transport from 
+our computer to the server. This is also the method we need to use should the
+API require a login.
+
+
+
+https://www.guru99.com/difference-get-post-http.html#difference-between-a-get-and-post har 
+gode illustrationer.
+
 
 With a POST-request we can control what data is send along with the
 request, and the data returned by the server depends on what data we
