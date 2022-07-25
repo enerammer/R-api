@@ -1,20 +1,21 @@
 ---
-title: "What is an API?"
+title: "GETting data"
 teaching: 30
 exercises: 15
 output: 
   html_document:
     df_print: paged
 objectives:
-- Understand what an API do
-- Connect to Statistics Denmark, and extract data
-- Create a list of lists to control the variables to be extracted
+- Learn how to retrieve data using the GET method
+- Learn how to adjust headers to get desired result
 keypoints: 
-- Getting data from an API is equivalent to requesting a webpage
-- POST requests to servers put specific demands on how we request data
+- 200 is the internet code for everything is OK
+- GET requests can be adjusted to specify desired result
+- Dad jokes are not really that good.
 source: Rmd
 questions:
-- What is an API?
+- How do I get data from an API using the GET method?
+- Is there a way to modify headers, to get a specific type of result?
 editor_options: 
   markdown: 
     wrap: 72
@@ -39,29 +40,33 @@ please excuse us for any red errors on the pages for the time being.
 The site icanhazdadjoke.com offers a wide selection of dad-jokes.
 
 
+> ## Dad jokes
+> a wholesome joke of the type said to be told by fathers with a punchline that is often an obvious or predictable pun or play on words and usually judged to be endearingly corny or unfunny
+> https://www.merriam-webster.com/dictionary/dad%20joke
+{: .callout}
 
-a wholesome joke of the type said to be told by fathers with a punchline that is often an obvious or predictable pun or play on words and usually judged to be endearingly corny or unfunny
-https://www.merriam-webster.com/dictionary/dad%20joke
 
-In addition to the website, an API is available that can be accessed using the 
-GET method.
+In addition to the website, an API is available that can be accessed using the  GET method.
 
-The GET method is a generic term, we need a function that handles the behind-the-scenes-stuff 
-for us. The library *httr* have an implementation:
+The GET method is a generic procedure, we need a function that actually handles the behind-the-scenes-stuff for us.
+The library *httr* have an implementation:
 ```{r}
 library(httr)
 ```
 
-Taking a quick look at the documentation we first try GET directly:
+Taking a quick look at the documentation https://icanhazdadjoke.com/api we first try GET directly:
 ```{r}
 GET("https://icanhazdadjoke.com/")
 ```
+
 What is returned is the response from the server. That includes much more than
 what we are looking for. Notable is the "Status" part, which we are told is 
 "200", which is server-lingo for "everything is OK".
 
 And what do we get? We get a webpage. We can see that the content is 
-*<DOCTYPE html>*. That was not really what we were looking for.
+*DOCTYPE html*. That was not really what we were looking for. HTML is not
+ that easy to work with, and contains a lot of extranious information
+that we do not  need.
 
 Even if the GET method is relatively simple to work with, we need to add a 
 bit more. Again taking a look at the documentation, it appears that we 
@@ -69,36 +74,67 @@ need to tell the API, that we would like a specific type of response, rather
 than the default html, more specifically "text/plain". 
 
 *httr* has helper functions to assist us. The one we need here is *accept()*
-
+We now use that to tell the server, that we really want a response in just
+text:
 ```{r}
 result <- GET("https://icanhazdadjoke.com/", accept("text/plain")) 
 result
 ```
-We still get the response from the server, telling us that Status is 200, and 
+We still get the response from the server, telling us that Status is 200, and
 everything is OK. But where is our dad-joke?
 
-That is hidden in the content of the response. It is sent to us as binary code,
+It is hidden in the content of the response. It is sent to us as binary code,
 so we are using the *content()* function, also from *httr* to extract it:
 
 ```{r}
 content(result)
 ```
-Theres a little warning about the encoding of the string. But now we have a dad-joke!
+
+There is a little warning about the encoding of the string. But now we have a dad-joke!
 
 What if we need to retrieve a specific joke? All the jokes has an ID, that 
-we can use for that. If we want to find that, we need a bit more information about
-the joke. We can get that by specifying that we would like the result of our
+we can use for that. If we want to find that, we need a bit more information about the joke. We can get that by specifying that we would like the result of our
 GET-request returned as JSON. 
 
 shoutout om json.
 
 
+> ## JSON
+>JSON (JavaScript Object Notation) is a format for structuring, 
+>in principle, any kind for text, structured in almost any way.
+
+>It consists of pairs of strings, one denoting the name of the data we
+>are looking at, and one containing the content of that data. Each set of 
+>data fields are encapsulated in curly braces, and a data field can have 
+>subfields, also encapsulated in curly braces. It can look like this:
+>
+>{
+>"firstName": "John",
+>"lastName": "Smith",
+>"phoneNumbers":{
+>  "type": "home",
+>  "number": "212 555-1234"
+>    },
+>    {
+>      "type": "office",
+>      "number": "646 555-4567"
+>    }
+>}
+>
+> JSON is readable for both humans and computers, but can be a bit 
+> tricky to convert to dataframes if there are a lot of nested fields.
+{: .callout}
+
+
+
+
 Looking at the documentation, we see an example, which indicates that what 
-we should tell the server that we accept should be "application/json".
+we should tell the server that we accept, should be "application/json".
 ```{r}
 result <- GET("https://icanhazdadjoke.com/", accept("application/json")) 
 result
 ```
+
 Again - everything is nice and 200 = OK.
 
 We also see a truncated version of the actual joke.
@@ -108,17 +144,17 @@ Let us use the content() function to extract the content:
 ```{r}
 content(result)
 ```
-
-status is repeated, and now we have an id. We can use that to extract the 
+This data is returned as a list, which is the R-default way of 
+handling any kind of data.
+Status is repeated, and now we have an id. We can use that to extract the 
 same joke again.
-
 
 NOTE: The joke returned is chosen at random. The id used here will probably 
 be different from what we found above.
 
 The way to retrieve a specific joke is to GET the URL:
 
-GET https://icanhazdadjoke.com/j/<joke_id>
+`GET https://icanhazdadjoke.com/j/<joke_id>`
 
 Where we replace the <joke_id> with the specific joke we want. Remember to
 specify the result that we want:
@@ -130,18 +166,21 @@ GET("https://icanhazdadjoke.com/j/lGJmrrzAsc",  accept("text/plain")) %>%
 
 We can also search for words in jokes. The documentation tells us, that we 
 should send our GET request to the URL 
+
 https://icanhazdadjoke.com/search
 
 And in the examples we get the hint, that we should format the URL as:
+
 https://icanhazdadjoke.com/search?term=<TERM>
 
-Dogs are always fun, let us search for dad jokes about dogs. specify the
+Dogs are always fun, let us search for dad jokes about dogs. Specify the
 type of result we want, pipe the response to the content() function and save 
 it to *result*:
 
 ```{r}
-result <- GET("https://icanhazdadjoke.com/search?term=dog", accept("application/json")) %>% 
-  content()
+result <- GET("https://icanhazdadjoke.com/search?term=dog",
+              accept("application/json")) %>% 
+          content()
 result
 ```
 
@@ -168,4 +207,20 @@ Next, we are going to take a look on how we get results using the POST method,
 on an API that provides more factual and serious, but not so funny data.
 
 
+> ## Exercise
+>
+> Request dad jokes about cats
+>
+> > ## Solution
+> >
+> > ```{r}
+> > GET("https://icanhazdadjoke.com/search?term=dog", accept("application/json")) %>% 
+> > content(as="text") %>% 
+> > fromJSON()
+> > ```
+> {: .solution}
+{: .challenge}
 
+
+
+{% include links.md %}
