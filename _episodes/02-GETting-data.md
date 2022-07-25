@@ -61,10 +61,10 @@ GET("https://icanhazdadjoke.com/")
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:34
+  Date: 2022-07-25 12:57
   Status: 200
   Content-Type: text/html; charset=utf-8
-  Size: 9.77 kB
+  Size: 9.91 kB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,10 +107,10 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:34
+  Date: 2022-07-25 12:57
   Status: 200
   Content-Type: text/plain
-  Size: 128 B
+  Size: 77 B
 ~~~
 {: .output}
 We still get the response from the server, telling us that Status is 200, and
@@ -135,7 +135,7 @@ No encoding supplied: defaulting to UTF-8.
 
 
 ~~~
-[1] "I dreamed about drowning in an ocean made out of orange soda last night. It took me a while to work out it was just a Fanta sea."
+[1] "As I suspected, someone has been adding soil to my garden. The plot thickens."
 ~~~
 {: .output}
 
@@ -190,11 +190,11 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:34
+  Date: 2022-07-25 12:57
   Status: 200
   Content-Type: application/json
-  Size: 112 B
-{"id":"JBs4T79Edpb","joke":"Breaking news! Energizer Bunny arrested \u2013 ch...
+  Size: 108 B
+{"id":"q4hiGJBXLe","joke":"Why do fish live in salt water? Because pepper mak...
 ~~~
 {: .output}
 
@@ -214,10 +214,10 @@ content(result)
 
 ~~~
 $id
-[1] "JBs4T79Edpb"
+[1] "q4hiGJBXLe"
 
 $joke
-[1] "Breaking news! Energizer Bunny arrested – charged with battery."
+[1] "Why do fish live in salt water? Because pepper makes them sneeze!"
 
 $status
 [1] 200
