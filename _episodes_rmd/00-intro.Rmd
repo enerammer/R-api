@@ -2,16 +2,16 @@
 title: "Before we Start"
 teaching: 10
 exercises: 5
-questions:
-- "Is this an introduction to R?"
-- "What should I remember about R?"
-- "What new concepts are introduced?"
 objectives:
 - "Align expectations to required knowledge"
 - "Get an overview of the aims of this course"
 keypoints:
 - "This course builds on previous courses and is not suitable for absolute beginners."
 - "We begin by accessing an API using lowlevel methods, and end by applying them on another API."
+questions:
+- "Is this an introduction to R?"
+- "What should I remember about R?"
+- "What new concepts are introduced?"
 source: Rmd
 ---
 
