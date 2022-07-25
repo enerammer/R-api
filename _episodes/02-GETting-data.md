@@ -61,10 +61,10 @@ GET("https://icanhazdadjoke.com/")
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:08
+  Date: 2022-07-25 12:34
   Status: 200
   Content-Type: text/html; charset=utf-8
-  Size: 9.86 kB
+  Size: 9.77 kB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,10 +107,10 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:08
+  Date: 2022-07-25 12:34
   Status: 200
   Content-Type: text/plain
-  Size: 54 B
+  Size: 128 B
 ~~~
 {: .output}
 We still get the response from the server, telling us that Status is 200, and
@@ -135,7 +135,7 @@ No encoding supplied: defaulting to UTF-8.
 
 
 ~~~
-[1] "The invention of the wheel was what got things rolling"
+[1] "I dreamed about drowning in an ocean made out of orange soda last night. It took me a while to work out it was just a Fanta sea."
 ~~~
 {: .output}
 
@@ -190,11 +190,11 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:08
+  Date: 2022-07-25 12:34
   Status: 200
   Content-Type: application/json
-  Size: 116 B
-{"id":"a218pbMmOmb","joke":"What's the best thing about elevator jokes? They ...
+  Size: 112 B
+{"id":"JBs4T79Edpb","joke":"Breaking news! Energizer Bunny arrested \u2013 ch...
 ~~~
 {: .output}
 
@@ -214,10 +214,10 @@ content(result)
 
 ~~~
 $id
-[1] "a218pbMmOmb"
+[1] "JBs4T79Edpb"
 
 $joke
-[1] "What's the best thing about elevator jokes? They work on so many levels."
+[1] "Breaking news! Energizer Bunny arrested – charged with battery."
 
 $status
 [1] 200
@@ -315,42 +315,42 @@ $results[[2]]$joke
 
 $results[[3]]
 $results[[3]]$id
-[1] "71wsPKeF6h"
+[1] "DIeaUDlbUDd"
 
 $results[[3]]$joke
-[1] "What did the dog say to the two trees? Bark bark."
+[1] "“My Dog has no nose.” “How does he smell?” “Awful”"
 
 
 $results[[4]]
 $results[[4]]$id
-[1] "lyk3EIBQfxc"
+[1] "GtH6E6UD5Ed"
 
 $results[[4]]$joke
-[1] "I went to the zoo the other day, there was only one dog in it. It was a shitzu."
+[1] "What kind of dog lives in a particle accelerator? A Fermilabrador Retriever."
 
 
 $results[[5]]
 $results[[5]]$id
-[1] "EBQfiyXD5ob"
+[1] "R7UfaahVfFd"
 
 $results[[5]]$joke
-[1] "what do you call a dog that can do magic tricks? a labracadabrador"
+[1] "My dog used to chase people on a bike a lot. It got so bad I had to take his bike away."
 
 
 $results[[6]]
 $results[[6]]$id
-[1] "DIeaUDlbUDd"
+[1] "lyk3EIBQfxc"
 
 $results[[6]]$joke
-[1] "“My Dog has no nose.” “How does he smell?” “Awful”"
+[1] "I went to the zoo the other day, there was only one dog in it. It was a shitzu."
 
 
 $results[[7]]
 $results[[7]]$id
-[1] "GtH6E6UD5Ed"
+[1] "71wsPKeF6h"
 
 $results[[7]]$joke
-[1] "What kind of dog lives in a particle accelerator? A Fermilabrador Retriever."
+[1] "What did the dog say to the two trees? Bark bark."
 
 
 $results[[8]]
@@ -363,10 +363,10 @@ $results[[8]]$joke
 
 $results[[9]]
 $results[[9]]$id
-[1] "R7UfaahVfFd"
+[1] "EBQfiyXD5ob"
 
 $results[[9]]$joke
-[1] "My dog used to chase people on a bike a lot. It got so bad I had to take his bike away."
+[1] "what do you call a dog that can do magic tricks? a labracadabrador"
 
 
 $results[[10]]
