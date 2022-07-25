@@ -94,10 +94,25 @@ primarily concerns how we tell the API what data we would like.
 In a *GET* request, we encode what we would like returned in the URL. 
 You probably know that way already. 
 
-The URL "https://icanhazdadjoke.com/search?term=dog" is asking the amazon.de server
-to search for the term "dog". What we are searching for, is placed directly in the URL.
+The URL "https://icanhazdadjoke.com/search?term=dog" is asking the server
+to search for the term "dog". What we are searching for, is 
+placed directly in the URL.
+
+What we are sending to the server looks like this:
+
+[GET header](../fig/GET-headers.png)
+
 
 In a *POST* request, that information is stored in the body of the request.
+
+That looks like this:
+
+[POST header](../fig/POST-headers.png)
+
+Note that the main difference between these two sets of headers, besides the
+difference in GET and POST, is that there is a *body* in the POST version.
+This is where the actual search is placed, rather than in the URL. 
+
 
 Almost all APIs support one or both of these methods.
 
@@ -106,7 +121,8 @@ edit the URL to search for something else. On the other hand there are limitatio
 to what we can search for. Everything must be text, and there are limitations on the length of the search as well.
 
 The POST method allow us to search for arbitrarily many parameters, and can handle
-many different data types. The POST method
+many different data types - because we can put almost any kind of data into the
+body part of the request. The POST method
 is also more secure, because the body can be encrypted during transport from 
 our computer to the server. This is also the method we need to use should the
 API require a login.

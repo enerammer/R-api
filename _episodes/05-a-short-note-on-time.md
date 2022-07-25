@@ -3,13 +3,12 @@
 # Instead, please edit 05-a-short-note-on-time.md in _episodes_rmd/
 title: "Time"
 keypoints:
-
-- Use `pivot_longer()` to go from wide to long format.
+- "Working with time and dates can be complicated. Lubridate makes it easier"
+- "Special date-time formats can be handled using the library zoo"
 objectives:
-- Describe the purpose of an R package and the **`dplyr`** and **`tidyr`** packages.
-- Select certain columns in a dataframe with the **`dplyr`** function `select`.
+- "Learn how to convert text describing dates and time to something R can understand"
 questions:
-- How can I select specific rows and/or columns from a dataframe?
+- "How can I convert a textual representation of time and dates to something R can understand?"
 teaching: 50
 exercises: 30
 source: Rmd
@@ -24,10 +23,8 @@ source: Rmd
 
 “People assume that time is a strict progression from cause to effect, but actually from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly-wobbly, timey-wimey stuff.”
 
-Time is not easy to deal with. It is actually really complicated. Here is a rant 
-on how complicated it is...
-
-https://www.youtube.com/watch?v=-5wpm-gesOY
+Time is not easy to deal with. It is actually really complicated. [Here is a rant 
+on how complicated it is...](https://www.youtube.com/watch?v=-5wpm-gesOY)
 
 
 ## Why?
@@ -86,7 +83,7 @@ head(data)
 ~~~
 {: .output}
 
-Note that the datatype for "TID" is <chr>, meaning character. Those are 
+Note that the datatype for "TID" is *chr*, meaning character. Those are 
 simply text, not a time. And if we want to plot this, as a function of time,
 the "TID" variable needs to be converted into something R can understand as time.
 
@@ -202,6 +199,7 @@ hm("14:05")
 ~~~
 {: .output}
 
+
 ~~~
 hms("14.05.21")
 ~~~
@@ -293,6 +291,7 @@ class(quarters)
 [1] "character"
 ~~~
 {: .output}
+
 It is a character vector, ie strings. If we want to analyse any data 
 associated with these specific quarters, we need to convert them to something 
 R is able to recognize as time.
@@ -312,6 +311,7 @@ yearquarter(quarters)
 # Year starts on: January
 ~~~
 {: .output}
+
 We are not going to go into further details on the challenges of working with
 time-series. The generic lubridate functions and yearquarter() will be enough for
 our purposes.
