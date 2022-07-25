@@ -61,10 +61,10 @@ GET("https://icanhazdadjoke.com/")
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 11:27
+  Date: 2022-07-25 12:08
   Status: 200
   Content-Type: text/html; charset=utf-8
-  Size: 9.78 kB
+  Size: 9.86 kB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,10 +107,10 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 11:27
+  Date: 2022-07-25 12:08
   Status: 200
   Content-Type: text/plain
-  Size: 112 B
+  Size: 54 B
 ~~~
 {: .output}
 We still get the response from the server, telling us that Status is 200, and
@@ -135,7 +135,7 @@ No encoding supplied: defaulting to UTF-8.
 
 
 ~~~
-[1] "What did celery say when he broke up with his girlfriend? She wasn't right for me, so I really don't carrot all."
+[1] "The invention of the wheel was what got things rolling"
 ~~~
 {: .output}
 
@@ -190,11 +190,11 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 11:27
+  Date: 2022-07-25 12:08
   Status: 200
   Content-Type: application/json
-  Size: 102 B
-{"id":"8U0TClqOZDd","joke":"What was the pumpkin\u2019s favorite sport?\r\n\r...
+  Size: 116 B
+{"id":"a218pbMmOmb","joke":"What's the best thing about elevator jokes? They ...
 ~~~
 {: .output}
 
@@ -214,10 +214,10 @@ content(result)
 
 ~~~
 $id
-[1] "8U0TClqOZDd"
+[1] "a218pbMmOmb"
 
 $joke
-[1] "What was the pumpkin’s favorite sport?\r\n\r\nSquash."
+[1] "What's the best thing about elevator jokes? They work on so many levels."
 
 $status
 [1] 200
