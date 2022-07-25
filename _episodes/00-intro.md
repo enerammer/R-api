@@ -5,14 +5,15 @@ title: "Before we Start"
 teaching: 10
 exercises: 5
 questions:
-- "What should I remember about R?"
 - "Is this an introduction to R?"
+- "What should I remember about R?"
+- "What new concepts are introduced?"
 objectives:
 - "Align expectations to required knowledge"
 - "Get an overview of the aims of this course"
 keypoints:
 - "This course builds on previous courses and is not suitable for absolute beginners."
-- "We begin by accessing an API using lowlevel methods, and end by applying them on another API"
+- "We begin by accessing an API using lowlevel methods, and end by applying them on another API."
 source: Rmd
 ---
 
@@ -21,28 +22,28 @@ source: Rmd
 ## This is not an introduction to R
 
 This course assumes a certain level of knowledge about R. We are not going
-to cover the basics, and you are expected to know how to use the following functionalities in R before starting this course.
+to cover the basics, and we are assuming that you know how to use the following  functionalities in R before starting this course:
 
 - Have R and R-studio installed. 
-  Alternatively run everything on rstudio.cloud
+    - Alternatively run everything on rstudio.cloud
 - Know how to assign values to variables
-- know what a function is, and how we pass input and parameters to it
-- be familiar with the %>% operator
-- know the basic verbs from dplyr of the tidyverse:
+- Know what a function is, and how we pass input and parameters to it
+- Be familiar with the %>% operator
+- Know the basic verbs from dplyr of the tidyverse:
     - select
     - filter
     - mutate
     - arrange
     - summarise
-- be familiar with dataframes
-- know how to install and load packages
+- Be familiar with dataframes
+- Know how to install and load packages
 - Know how to comment your code
-- do math on variables
+- Know how to do math on variables
 - Get the concept of vectors
-- subsetting vectors and dataframes
-- logical tests
+- Subsetting vectors and dataframes
+    - Using logical tests
 - Use NA to encode missing values
-- read in data from a csv/excel
+- Read in data from a csv/excel
 
 If any of these topics are unfamiliar, we strongly recommend that you either 
 take one of our introductory courses, read up on the curriculum of one of them, 
@@ -61,14 +62,17 @@ We will look at them when we need them.
 
 ## What is covered?
 
-We will look at how to extract data from APIs in general, using the API of 
-Statistics Denmark as an example. 
+We will look at how to extract data from APIs in general. 
 
-The package *danstat* is introduced. This is provides an easier way to interact
+We start with the GET method, to get bad jokes.
+
+The POST method allow more advanced searches in the API. We apply it to
+the API provided by Statistics Denmark.
+
+Finally the package *danstat* is introduced. This is provides an easier way to interact
 with Statistics Denmark.
 
-Finally we are using the insights from the first part to extract data from 
-wikidata, the database and API that consolidates information across Wikipedia.
+
 
 
 {% include links.md %}
