@@ -61,10 +61,10 @@ GET("https://icanhazdadjoke.com/")
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:57
+  Date: 2022-07-25 13:10
   Status: 200
   Content-Type: text/html; charset=utf-8
-  Size: 9.91 kB
+  Size: 9.88 kB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,10 +107,10 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:57
+  Date: 2022-07-25 13:10
   Status: 200
   Content-Type: text/plain
-  Size: 77 B
+  Size: 58 B
 ~~~
 {: .output}
 We still get the response from the server, telling us that Status is 200, and
@@ -135,7 +135,7 @@ No encoding supplied: defaulting to UTF-8.
 
 
 ~~~
-[1] "As I suspected, someone has been adding soil to my garden. The plot thickens."
+[1] "How does a penguin build it’s house? Igloos it together."
 ~~~
 {: .output}
 
@@ -190,11 +190,11 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 12:57
+  Date: 2022-07-25 13:10
   Status: 200
   Content-Type: application/json
-  Size: 108 B
-{"id":"q4hiGJBXLe","joke":"Why do fish live in salt water? Because pepper mak...
+  Size: 98 B
+{"id":"UKeFB59EQf","joke":"Why did the coffee file a police report? It got mu...
 ~~~
 {: .output}
 
@@ -214,10 +214,10 @@ content(result)
 
 ~~~
 $id
-[1] "q4hiGJBXLe"
+[1] "UKeFB59EQf"
 
 $joke
-[1] "Why do fish live in salt water? Because pepper makes them sneeze!"
+[1] "Why did the coffee file a police report? It got mugged."
 
 $status
 [1] 200
