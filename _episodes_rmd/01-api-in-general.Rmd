@@ -1,25 +1,34 @@
 ---
-title: "What is an API?"
+title: "GETting data"
 teaching: 30
 exercises: 15
+output: 
+  html_document:
+    df_print: paged
 objectives:
-- "Understand what an API do"
-- "Get to know the two main ways to get data from APIs"
+- Learn how to retrieve data using the GET method
+- Learn how to adjust headers to get desired result
 keypoints: 
-- "Getting data from an API is equivalent to requesting a webpage"
-- "GET requests specify what data we want to retrieve in the URL"
-- "Header in 
-- "POST requests specify what data we want to retrieve in the request itself."
-questions:
-- "What is an API?"
-- "How do our computer interact with servers?"
+- 200 is the internet code for everything is OK
+- GET requests can be adjusted to specify desired result
+- Dad jokes are not really that good.
 source: Rmd
+questions:
+- How do I get data from an API using the GET method?
+- Is there a way to modify headers, to get a specific type of result?
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include = F, echo=F}
 source("../bin/chunk-options.R")
 knitr_fig_path("01-")
 source("../bin/download_data.R")
+```
+
+
+```{r setup2, include = F, echo=F}
 library(remotes)
 remotes::install_github("cran/danstat")
 library(danstat)
@@ -112,4 +121,4 @@ is also more secure, because the body can be encrypted during transport from
 our computer to the server. This is also the method we need to use should the
 API require a login.
 
-
+{% include links.md %}
