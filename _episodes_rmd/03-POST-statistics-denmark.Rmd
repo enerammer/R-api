@@ -1,20 +1,20 @@
 ---
-title: "What is an API?"
+title: "Using POST"
 teaching: 30
 exercises: 15
 output: 
   html_document:
     df_print: paged
 objectives:
-- Understand what an API do
-- Connect to Statistics Denmark, and extract data
-- Create a list of lists to control the variables to be extracted
+- "Connect to Statistics Denmark, and extract data"
+- "Create a list of lists to control the variables to be extracted"
 keypoints: 
-- Getting data from an API is equivalent to requesting a webpage
-- POST requests to servers put specific demands on how we request data
+- "POST requests to servers put specific demands on how we request data"
+- "Using an API requires us to understand (some of) the ways the API works"
+- "Different searches typically requires different endpoints"
 source: Rmd
 questions:
-- What is an API?
+- "How do I get data from an API using the POST method?"
 editor_options: 
   markdown: 
     wrap: 72
@@ -22,7 +22,7 @@ editor_options:
 
 ```{r setup, include = F, echo=F}
 source("../bin/chunk-options.R")
-knitr_fig_path("02-")
+knitr_fig_path("03-")
 source("../bin/download_data.R")
 library(remotes)
 remotes::install_github("cran/danstat")
@@ -54,23 +54,21 @@ That was confusing!
 
 Three main things:
 
-Statistics Denmark provides four "functions", or "endpoints":
+Statistics Denmark provides four "functions", or *endpoints*. This is equivalent
+to the URL we requested data from using the GET method.
 
-```{r DSfunctions, echo = FALSE, fig.show = "hold", out.width = "100%", fig.alt = " "}
+```{r DSfunctions, echo = FALSE, fig.show = "hold", out.width = "50%", fig.alt = " "}
 
 knitr::include_graphics("../fig/DSfunctions.png")
 ```
 
 
-The first is the "web"-site we have to send requests to if we want information 
-on the subjects in Statistics Denmark.
-
-In the second we get information about which tables are available for a 
+- The first is the "web"-site we have to send requests to if we want information 
+on the subjects in Statistics Denmark. 
+- In the second we get information about which tables are available for a 
 given subject.
-
-The third will provide metadata on a table.
-
-When we finally need the data, we will visit the last endpoint.
+- The third will provide metadata on a table.
+- When we finally need the data, we will visit the last endpoint.
 
 
 Let us send a request to `subjects`.
@@ -80,38 +78,42 @@ The endpoint was
 endpoint <- "http://api.statbank.dk/v1/subjects"
 ```
 
+
 We will now need to construct a named list for the content of the body that we send along with our request.
 
 This is a new datastructure that we have not encountered before.
 
 Vectors are annoying because they can only contain one datatype. And dataframes must be rectangular. 
 
-A list allows us to store basically anything. The reason that we dont use them generally is that they are a bit more difficult to work with.
+A list allows us to store basically anything. The reason that we do not use them 
+for everything is that they are a bit more difficult to work with.
 
 ```{r}
 our_body <- list(lang = "en", recursive = FALSE, 
                   includeTables = FALSE, subjects = NULL)
 ```
-This list contains four elements, with names. The first, `lang`, contains a character vector (length 1), containing "en", the language that we want Statistics Denmark to use when returning data.
 
-`recursive` and `includeTables` are logical values, both false. And `subjects` is a special value, NULL. This is not a missing value, there simply isn't anything there. But this nothing does have a name.
+This list contains four elements, with names. 
+- The first, `lang`, contains a character vector (length 1), containing "en", the language that we want Statistics Denmark to use when returning data.
+- `recursive` and `includeTables` are logical values, both false. 
+- `subjects` is a special value, NULL. This is not a missing value, there simply isn't anything there. But this nothing does have a name.
 
-callout
+> ## lists
+> Lists are subset in a special way. If we want the 
+> first element in `our_body`, we can use the usual bracket notation:
+> 
+> ```{r}
+> our_body[1]
+> ```
+> If we want the actual value of element 1, we use a double bracket notation:
+> ```{r}
+> our_body[[1]]
+> ```
+{: .callout}
 
-Lists are subset in a special way. If we want the 
-first element in `our_body`, we can use the usual bracket notation:
 
-```{r}
-our_body[1]
-```
-If we want the actual value of element 1, we use a double bracket notation:
-```{r}
-our_body[[1]]
-```
-end callout
-
-
-Now we have the two things we need, an endpoint to send a request, and a body containg what we want returned. 
+Now we have the two things we need, an endpoint to send a request, and a body 
+containing what we want returned. 
 
 Let us try it:
 ```{r}
@@ -291,4 +293,5 @@ We will look at that shortly. So why do it this way? These techniques are the sa
 
 
 
+{% include links.md %}
 
