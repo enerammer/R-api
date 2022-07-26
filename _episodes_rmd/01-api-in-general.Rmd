@@ -39,7 +39,7 @@ library(tidyverse)
 
 An API is an Application Programming Interface. It is a way of making
 applications, in our case an R-script, able to communicate with another
-application typically an onlie database.
+application typically an online database.
 
 What we want to be able to do, is to let our own application, our
 R-script, send a command to a remote application, an online database, in
@@ -66,7 +66,6 @@ webpage](../fig/http-structure.png)
     browser we are using and cookies, to just mention two. The most
     important might be information about what type of response we would
     like.
-
 -   The webserver interpret the request, and retrieves the data.
 
 -   After that, the webserver sends both the status of the request
