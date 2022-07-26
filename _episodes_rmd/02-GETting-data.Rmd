@@ -54,7 +54,7 @@ The library *httr* have an implementation:
 library(httr)
 ```
 
-Taking a quick look at the documentation https://icanhazdadjoke.com/api we first try GET directly:
+Taking a quick look at the [documentation](https://icanhazdadjoke.com/api) we first try GET directly:
 ```{r}
 GET("https://icanhazdadjoke.com/")
 ```
@@ -102,7 +102,6 @@ shoutout om json.
 > ## JSON
 >JSON (JavaScript Object Notation) is a format for structuring, 
 >in principle, any kind for text, structured in almost any way.
-
 >It consists of pairs of strings, one denoting the name of the data we
 >are looking at, and one containing the content of that data. Each set of 
 >data fields are encapsulated in curly braces, and a data field can have 
@@ -130,6 +129,8 @@ shoutout om json.
 
 Looking at the documentation, we see an example, which indicates that what 
 we should tell the server that we accept, should be "application/json".
+The *httr* library contains helper functions to assist us in manipulating the 
+header. We use *accept()* that sets the *accept* part of the header:
 ```{r}
 result <- GET("https://icanhazdadjoke.com/", accept("application/json")) 
 result
@@ -156,7 +157,7 @@ The way to retrieve a specific joke is to GET the URL:
 
 `GET https://icanhazdadjoke.com/j/<joke_id>`
 
-Where we replace the <joke_id> with the specific joke we want. Remember to
+Where we replace the *joke_id* with the specific joke we want. Remember to
 specify the result that we want:
 
 ```{r}
@@ -188,8 +189,10 @@ This is in JSON format. It is clear that the jokes are in the $results part of t
 datastructure. How can we get that to a data frame?
 
 the content() function can treat the content of our response in different ways.
-If we treat it as text, the function fromJSON, can convert it to a data frame:
+If we treat it as text, the function fromJSON from the library *jsonlite*, can 
+convert it to a data frame. We begin by loading the library:
 ```{r}
+library(jsonlite)
 GET("https://icanhazdadjoke.com/search?term=dog", accept("application/json")) %>% 
   content(as="text") %>% 
   fromJSON()
@@ -199,7 +202,8 @@ We have now seen how to send a request to an API, with search terms
 embedded in the URL.
 
 We have seen how to add an argument to the GET function, that specifies the
-type of result we would like.
+type of result we would like, effectively by adding something to the header
+of our request.
 
 And we have seen how to extract the results, and get them into a dataframe.
 

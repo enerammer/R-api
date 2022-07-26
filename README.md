@@ -1,6 +1,6 @@
-# FIXME Lesson title
+# APIs using R
 
-This repository generates the corresponding lesson website from [The Carpentries](https://carpentries.org/) repertoire of lessons. 
+This repository generates the corresponding lesson website from [The KUB Datalab](https://kubdatalab.github.io/R-api). 
 
 ## Contributing
 
@@ -22,9 +22,7 @@ Look for the tag ![good_first_issue](https://img.shields.io/badge/-good%20first%
 
 Current maintainers of this lesson are 
 
-* FIXME
-* FIXME
-* FIXME
+* cbk@kb.dk
 
 
 ## Authors
