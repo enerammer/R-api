@@ -15,9 +15,7 @@ keypoints:
 source: Rmd
 questions:
 - "How do I get data from an API using the POST method?"
-editor_options: 
-  markdown: 
-    wrap: 72
+
 ---
 
 ```{r setup, include = F, echo=F}
@@ -52,16 +50,13 @@ https://www.dst.dk/en/Statistik/brug-statistikken/muligheder-i-statistikbanken/a
 That was confusing!
 
 
-Three main things:
+The main points:
 
-Statistics Denmark provides four "functions", or *endpoints*. This is equivalent
+First: Statistics Denmark provides four "functions", or *endpoints*. This is equivalent
 to the URL we requested data from using the GET method.
 
-```{r DSfunctions, echo = FALSE, fig.show = "hold", out.width = "50%", fig.alt = " "}
 
-knitr::include_graphics("../fig/DSfunctions.png")
-```
-
+!["functions or endpoints at the API](../fig/DSfunctions.png)
 
 - The first is the "web"-site we have to send requests to if we want information 
 on the subjects in Statistics Denmark. 
@@ -70,8 +65,16 @@ given subject.
 - The third will provide metadata on a table.
 - When we finally need the data, we will visit the last endpoint.
 
+Secondly: 
+We need to provide a body containing search parameters in a format like this:
 
-Let us send a request to `subjects`.
+```{r eval=F}
+{
+   "table": "folk1c"
+}
+```
+
+Let us look at how to do this, by sending a request to `subjects`.
 
 The endpoint was 
 ```{r}
@@ -83,7 +86,8 @@ We will now need to construct a named list for the content of the body that we s
 
 This is a new datastructure that we have not encountered before.
 
-Vectors are annoying because they can only contain one datatype. And dataframes must be rectangular. 
+Vectors are annoying because they can only contain one datatype. And dataframes 
+must be rectangular. 
 
 A list allows us to store basically anything. The reason that we do not use them 
 for everything is that they are a bit more difficult to work with.
@@ -132,46 +136,66 @@ Both informative. And utterly useless. The informative information is that our r
 Let us get the content of the result, which is what we actually want:
 
 ```{r}
-httr::content(result)
+result %>% 
+  content()
 ```
 More informative, but not really easy to read. 
 
 The library `jsonlite` has a function that converts this to something readable:
 
 ```{r}
-jsonlite::fromJSON(httr::content(result))
+result %>% 
+  content() %>% 
+  fromJSON()
 ```
 
 A nice dataframe with the ten major subjects in the databases of Statistics Denmark.
 
 Subject 1 contains information about populations and elections.
 
-There are sub-subjects under that.
+There are sub-subjects under that. We can see that in the column `hasSubjects`
+
 We now modify our body that we send with the request, to return information about the first subject.
 
-We need to make sure that the number of the subject, `1` is intepreted as it is. This is a little bit of mysterious handwaving - we simply put the 1 inside the function `I()` and stuff works.
+We need to make sure that the number of the subject, `1` is intepreted as it is. 
+This is a little bit of mysterious handwaving - we simply put the 1 inside the 
+function `I()` and stuff works.
 
 ```{r}
 our_body <- list(lang = "en", recursive = F, 
                   includeTables = F, subjects = I(1))
 ```
 
+
+> ## I()
+> I() isolates - or insulates - the contents of I() from the gaze of R's parsing code.
+> Basically it prevents R from doing stuff to the content that we dont want it to.
+> In this specific case, the POST() function would convert the vector 1, with length
+> 1, to a scalar, the more basic data type in R, that hold only one, single, atomic
+> value at a time.
+{: .callout}
+
+
+
 Note that it is important that we tell the POST function that the body is the body:
 
 ```{r}
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
-data
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
 
+data
 ```
 
-We now get at data frame containg a dataframe. We pick that out:
+Not that easy to see in this format, but the data frame contains a data frame.
+That is, in the column `subjects` the content is a data frame.
+
+We pick that out using the $-notation:
 ```{r}
 data$subjects
 ```
 
-This was why the dollar-notation for subsetting dataframes is important.
+
 
 These are the sub-subjects of subject 1.
 
@@ -185,9 +209,10 @@ our_body <- list(lang = "en", recursive = F,
 
 
 ```{r}
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
+
 data
 ```
 
@@ -195,6 +220,7 @@ We delve deeper into it:
 ```{r}
 data$subjects
 ```
+
 And now we are at the bottom. 20021 Population figures does not have any sub-sub-subjects.
 
 Next, let us take a look at the tables contained under subject 20021.
@@ -207,10 +233,10 @@ endpoint <- "http://api.statbank.dk/v1/tables"
 
 ```{r}
 our_body <- list(lang = "en", subjects = I(20021))
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
-data
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
+data %>% head()
 ```
 
 There are 21 tables under this subject. Let us see what information we can get about table "FOLK1A":
@@ -222,9 +248,9 @@ endpoint <- "http://api.statbank.dk/v1/tableinfo"
 
 ```{r}
 our_body <- list(lang = "en", table = "FOLK1A")
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
 data
 ```
 
@@ -274,13 +300,13 @@ endpoint <- "https://api.statbank.dk/v1/data"
 And the call:
 
 ```{r}
-data <- httr::POST(endpoint, body=our_body, encode = "json")
+data <- POST(endpoint, body=our_body, encode = "json")
 ```
 
 The data is returned as csv - we defined that in "our_body", so we now need to extract it a bit differently:
 ```{r}
 data <- data %>% 
-  httr::content(type = "text") %>% 
+  content(type = "text") %>% 
   read_csv2()
 data
 ```
@@ -290,6 +316,7 @@ Voila! We have a dataframe with information about how many persons in Denmark we
 That was a bit complicated. There are easier ways to do it.
 
 We will look at that shortly. So why do it this way? These techniques are the same techniques we use when we access an arbitrary other API. The fields, endpoints etc might be different. We might have an added complication of having to login to it. But the techniques can be reused.
+
 
 
 

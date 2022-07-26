@@ -50,7 +50,7 @@ library(httr)
 ~~~
 {: .language-r}
 
-Taking a quick look at the documentation https://icanhazdadjoke.com/api we first try GET directly:
+Taking a quick look at the [documentation](https://icanhazdadjoke.com/api) we first try GET directly:
 
 ~~~
 GET("https://icanhazdadjoke.com/")
@@ -61,10 +61,10 @@ GET("https://icanhazdadjoke.com/")
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 13:54
+  Date: 2022-07-26 13:37
   Status: 200
   Content-Type: text/html; charset=utf-8
-  Size: 9.9 kB
+  Size: 9.83 kB
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,11 +107,14 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 13:54
+  Date: 2022-07-26 13:37
   Status: 200
   Content-Type: text/plain
-  Size: 109 B
-Cosmetic surgery used to be such a taboo subject.
+  Size: 258 B
+Me: If humans lose the ability to hear high frequency volumes as they get old...
+
+Doctor: No, humans can never hear that high of a frequency no matter what age...
+
 ~~~
 {: .output}
 We still get the response from the server, telling us that Status is 200, and
@@ -136,7 +139,7 @@ No encoding supplied: defaulting to UTF-8.
 
 
 ~~~
-[1] "Cosmetic surgery used to be such a taboo subject.\r\nNow you can talk about Botox and nobody raises an eyebrow."
+[1] "Me: If humans lose the ability to hear high frequency volumes as they get older, can my 4 week old son hear a dog whistle?\r\n\r\nDoctor: No, humans can never hear that high of a frequency no matter what age they are.\r\n\r\nMe: Trick question... dogs can't whistle."
 ~~~
 {: .output}
 
@@ -152,7 +155,6 @@ shoutout om json.
 > ## JSON
 >JSON (JavaScript Object Notation) is a format for structuring, 
 >in principle, any kind for text, structured in almost any way.
-
 >It consists of pairs of strings, one denoting the name of the data we
 >are looking at, and one containing the content of that data. Each set of 
 >data fields are encapsulated in curly braces, and a data field can have 
@@ -180,6 +182,8 @@ shoutout om json.
 
 Looking at the documentation, we see an example, which indicates that what 
 we should tell the server that we accept, should be "application/json".
+The *httr* library contains helper functions to assist us in manipulating the 
+header. We use *accept()* that sets the *accept* part of the header:
 
 ~~~
 result <- GET("https://icanhazdadjoke.com/", accept("application/json")) 
@@ -191,11 +195,11 @@ result
 
 ~~~
 Response [https://icanhazdadjoke.com/]
-  Date: 2022-07-25 13:54
+  Date: 2022-07-26 13:37
   Status: 200
   Content-Type: application/json
-  Size: 138 B
-{"id":"nWDdFdFYLuc","joke":"Have you heard about the film \"Constipation\", y...
+  Size: 108 B
+{"id":"sPfqWDlq4Ed","joke":"\"Hey, dad, did you get a haircut?\" \"No, I got ...
 ~~~
 {: .output}
 
@@ -215,10 +219,10 @@ content(result)
 
 ~~~
 $id
-[1] "nWDdFdFYLuc"
+[1] "sPfqWDlq4Ed"
 
 $joke
-[1] "Have you heard about the film \"Constipation\", you probably haven't because it's not out yet."
+[1] "\"Hey, dad, did you get a haircut?\" \"No, I got them all cut.\""
 
 $status
 [1] 200
@@ -236,7 +240,7 @@ The way to retrieve a specific joke is to GET the URL:
 
 `GET https://icanhazdadjoke.com/j/<joke_id>`
 
-Where we replace the <joke_id> with the specific joke we want. Remember to
+Where we replace the *joke_id* with the specific joke we want. Remember to
 specify the result that we want:
 
 
@@ -300,74 +304,74 @@ $previous_page
 $results
 $results[[1]]
 $results[[1]]$id
-[1] "82wHlbaapzd"
+[1] "YvkV8xXnjyd"
 
 $results[[1]]$joke
-[1] "Me: If humans lose the ability to hear high frequency volumes as they get older, can my 4 week old son hear a dog whistle?\r\n\r\nDoctor: No, humans can never hear that high of a frequency no matter what age they are.\r\n\r\nMe: Trick question... dogs can't whistle."
+[1] "Why did the cowboy have a weiner dog? Somebody told him to get a long little doggy."
 
 
 $results[[2]]
 $results[[2]]$id
-[1] "YvkV8xXnjyd"
+[1] "82wHlbaapzd"
 
 $results[[2]]$joke
-[1] "Why did the cowboy have a weiner dog? Somebody told him to get a long little doggy."
+[1] "Me: If humans lose the ability to hear high frequency volumes as they get older, can my 4 week old son hear a dog whistle?\r\n\r\nDoctor: No, humans can never hear that high of a frequency no matter what age they are.\r\n\r\nMe: Trick question... dogs can't whistle."
 
 
 $results[[3]]
 $results[[3]]$id
-[1] "EBQfiyXD5ob"
+[1] "GtH6E6UD5Ed"
 
 $results[[3]]$joke
-[1] "what do you call a dog that can do magic tricks? a labracadabrador"
+[1] "What kind of dog lives in a particle accelerator? A Fermilabrador Retriever."
 
 
 $results[[4]]
 $results[[4]]$id
-[1] "DIeaUDlbUDd"
+[1] "R7UfaahVfFd"
 
 $results[[4]]$joke
-[1] "“My Dog has no nose.” “How does he smell?” “Awful”"
+[1] "My dog used to chase people on a bike a lot. It got so bad I had to take his bike away."
 
 
 $results[[5]]
 $results[[5]]$id
-[1] "GtH6E6UD5Ed"
+[1] "obhFBljb2g"
 
 $results[[5]]$joke
-[1] "What kind of dog lives in a particle accelerator? A Fermilabrador Retriever."
+[1] "I adopted my dog from a blacksmith. As soon as we got home he made a bolt for the door."
 
 
 $results[[6]]
 $results[[6]]$id
-[1] "R7UfaahVfFd"
+[1] "71wsPKeF6h"
 
 $results[[6]]$joke
-[1] "My dog used to chase people on a bike a lot. It got so bad I had to take his bike away."
+[1] "What did the dog say to the two trees? Bark bark."
 
 
 $results[[7]]
 $results[[7]]$id
-[1] "obhFBljb2g"
+[1] "lyk3EIBQfxc"
 
 $results[[7]]$joke
-[1] "I adopted my dog from a blacksmith. As soon as we got home he made a bolt for the door."
+[1] "I went to the zoo the other day, there was only one dog in it. It was a shitzu."
 
 
 $results[[8]]
 $results[[8]]$id
-[1] "71wsPKeF6h"
+[1] "EBQfiyXD5ob"
 
 $results[[8]]$joke
-[1] "What did the dog say to the two trees? Bark bark."
+[1] "what do you call a dog that can do magic tricks? a labracadabrador"
 
 
 $results[[9]]
 $results[[9]]$id
-[1] "lyk3EIBQfxc"
+[1] "DIeaUDlbUDd"
 
 $results[[9]]$joke
-[1] "I went to the zoo the other day, there was only one dog in it. It was a shitzu."
+[1] "“My Dog has no nose.” “How does he smell?” “Awful”"
 
 
 $results[[10]]
@@ -413,7 +417,32 @@ This is in JSON format. It is clear that the jokes are in the $results part of t
 datastructure. How can we get that to a data frame?
 
 the content() function can treat the content of our response in different ways.
-If we treat it as text, the function fromJSON, can convert it to a data frame:
+If we treat it as text, the function fromJSON from the library *jsonlite*, can 
+convert it to a data frame. We begin by loading the library:
+
+~~~
+library(jsonlite)
+~~~
+{: .language-r}
+
+
+
+~~~
+
+Attaching package: 'jsonlite'
+~~~
+{: .output}
+
+
+
+~~~
+The following object is masked from 'package:purrr':
+
+    flatten
+~~~
+{: .output}
+
+
 
 ~~~
 GET("https://icanhazdadjoke.com/search?term=dog", accept("application/json")) %>% 
@@ -425,15 +454,73 @@ GET("https://icanhazdadjoke.com/search?term=dog", accept("application/json")) %>
 
 
 ~~~
-Error in fromJSON(.): could not find function "fromJSON"
+No encoding supplied: defaulting to UTF-8.
 ~~~
-{: .error}
+{: .output}
+
+
+
+~~~
+$current_page
+[1] 1
+
+$limit
+[1] 20
+
+$next_page
+[1] 1
+
+$previous_page
+[1] 1
+
+$results
+            id
+1  82wHlbaapzd
+2  YvkV8xXnjyd
+3  EBQfiyXD5ob
+4  DIeaUDlbUDd
+5  GtH6E6UD5Ed
+6   obhFBljb2g
+7  R7UfaahVfFd
+8  lyk3EIBQfxc
+9   71wsPKeF6h
+10 sPRnOfiyAAd
+11 AQn3wPKeqrc
+12 Lmjqzsr49pb
+                                                                                                                                                                                                                                                                         joke
+1  Me: If humans lose the ability to hear high frequency volumes as they get older, can my 4 week old son hear a dog whistle?\r\n\r\nDoctor: No, humans can never hear that high of a frequency no matter what age they are.\r\n\r\nMe: Trick question... dogs can't whistle.
+2                                                                                                                                                                                         Why did the cowboy have a weiner dog? Somebody told him to get a long little doggy.
+3                                                                                                                                                                                                          what do you call a dog that can do magic tricks? a labracadabrador
+4                                                                                                                                                                                                                          “My Dog has no nose.” “How does he smell?” “Awful”
+5                                                                                                                                                                                                What kind of dog lives in a particle accelerator? A Fermilabrador Retriever.
+6                                                                                                                                                                                     I adopted my dog from a blacksmith. As soon as we got home he made a bolt for the door.
+7                                                                                                                                                                                     My dog used to chase people on a bike a lot. It got so bad I had to take his bike away.
+8                                                                                                                                                                                             I went to the zoo the other day, there was only one dog in it. It was a shitzu.
+9                                                                                                                                                                                                                           What did the dog say to the two trees? Bark bark.
+10                                                                                                                                              At the boxing match, the dad got into the popcorn line and the line for hot dogs, but he wanted to stay out of the punchline.
+11                                                                                                                                                                                                  It was raining cats and dogs the other day. I almost stepped in a poodle.
+12                                                                                                                                                                                            What did the Zen Buddist say to the hotdog vendor? Make me one with everything.
+
+$search_term
+[1] "dog"
+
+$status
+[1] 200
+
+$total_jokes
+[1] 12
+
+$total_pages
+[1] 1
+~~~
+{: .output}
 
 We have now seen how to send a request to an API, with search terms 
 embedded in the URL.
 
 We have seen how to add an argument to the GET function, that specifies the
-type of result we would like.
+type of result we would like, effectively by adding something to the header
+of our request.
 
 And we have seen how to extract the results, and get them into a dataframe.
 
@@ -458,9 +545,66 @@ on an API that provides more factual and serious, but not so funny data.
 > > 
 > > 
 > > ~~~
-> > Error in fromJSON(.): could not find function "fromJSON"
+> > No encoding supplied: defaulting to UTF-8.
 > > ~~~
-> > {: .error}
+> > {: .output}
+> > 
+> > 
+> > 
+> > ~~~
+> > $current_page
+> > [1] 1
+> > 
+> > $limit
+> > [1] 20
+> > 
+> > $next_page
+> > [1] 1
+> > 
+> > $previous_page
+> > [1] 1
+> > 
+> > $results
+> >             id
+> > 1  82wHlbaapzd
+> > 2  YvkV8xXnjyd
+> > 3  EBQfiyXD5ob
+> > 4  DIeaUDlbUDd
+> > 5  GtH6E6UD5Ed
+> > 6   obhFBljb2g
+> > 7  R7UfaahVfFd
+> > 8  lyk3EIBQfxc
+> > 9   71wsPKeF6h
+> > 10 sPRnOfiyAAd
+> > 11 AQn3wPKeqrc
+> > 12 Lmjqzsr49pb
+> >                                                                                                                                                                                                                                                                          joke
+> > 1  Me: If humans lose the ability to hear high frequency volumes as they get older, can my 4 week old son hear a dog whistle?\r\n\r\nDoctor: No, humans can never hear that high of a frequency no matter what age they are.\r\n\r\nMe: Trick question... dogs can't whistle.
+> > 2                                                                                                                                                                                         Why did the cowboy have a weiner dog? Somebody told him to get a long little doggy.
+> > 3                                                                                                                                                                                                          what do you call a dog that can do magic tricks? a labracadabrador
+> > 4                                                                                                                                                                                                                          “My Dog has no nose.” “How does he smell?” “Awful”
+> > 5                                                                                                                                                                                                What kind of dog lives in a particle accelerator? A Fermilabrador Retriever.
+> > 6                                                                                                                                                                                     I adopted my dog from a blacksmith. As soon as we got home he made a bolt for the door.
+> > 7                                                                                                                                                                                     My dog used to chase people on a bike a lot. It got so bad I had to take his bike away.
+> > 8                                                                                                                                                                                             I went to the zoo the other day, there was only one dog in it. It was a shitzu.
+> > 9                                                                                                                                                                                                                           What did the dog say to the two trees? Bark bark.
+> > 10                                                                                                                                              At the boxing match, the dad got into the popcorn line and the line for hot dogs, but he wanted to stay out of the punchline.
+> > 11                                                                                                                                                                                                  It was raining cats and dogs the other day. I almost stepped in a poodle.
+> > 12                                                                                                                                                                                            What did the Zen Buddist say to the hotdog vendor? Make me one with everything.
+> > 
+> > $search_term
+> > [1] "dog"
+> > 
+> > $status
+> > [1] 200
+> > 
+> > $total_jokes
+> > [1] 12
+> > 
+> > $total_pages
+> > [1] 1
+> > ~~~
+> > {: .output}
 > {: .solution}
 {: .challenge}
 

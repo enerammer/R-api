@@ -17,9 +17,7 @@ keypoints:
 source: Rmd
 questions:
 - "How do I get data from an API using the POST method?"
-editor_options: 
-  markdown: 
-    wrap: 72
+
 ---
 
 
@@ -46,13 +44,13 @@ https://www.dst.dk/en/Statistik/brug-statistikken/muligheder-i-statistikbanken/a
 That was confusing!
 
 
-Three main things:
+The main points:
 
-Statistics Denmark provides four "functions", or *endpoints*. This is equivalent
+First: Statistics Denmark provides four "functions", or *endpoints*. This is equivalent
 to the URL we requested data from using the GET method.
 
-<img src="../fig/DSfunctions.png" title=" " alt=" " width="50%" style="display: block; margin: auto;" />
 
+!["functions or endpoints at the API](../fig/DSfunctions.png)
 
 - The first is the "web"-site we have to send requests to if we want information 
 on the subjects in Statistics Denmark. 
@@ -61,8 +59,18 @@ given subject.
 - The third will provide metadata on a table.
 - When we finally need the data, we will visit the last endpoint.
 
+Secondly: 
+We need to provide a body containing search parameters in a format like this:
 
-Let us send a request to `subjects`.
+
+~~~
+{
+   "table": "folk1c"
+}
+~~~
+{: .language-r}
+
+Let us look at how to do this, by sending a request to `subjects`.
 
 The endpoint was 
 
@@ -76,7 +84,8 @@ We will now need to construct a named list for the content of the body that we s
 
 This is a new datastructure that we have not encountered before.
 
-Vectors are annoying because they can only contain one datatype. And dataframes must be rectangular. 
+Vectors are annoying because they can only contain one datatype. And dataframes 
+must be rectangular. 
 
 A list allows us to store basically anything. The reason that we do not use them 
 for everything is that they are a bit more difficult to work with.
@@ -150,7 +159,7 @@ result
 
 ~~~
 Response [https://api.statbank.dk/v1/subjects]
-  Date: 2022-07-25 13:54
+  Date: 2022-07-26 13:37
   Status: 200
   Content-Type: text/json; charset=utf-8
   Size: 884 B
@@ -162,51 +171,47 @@ Let us get the content of the result, which is what we actually want:
 
 
 ~~~
-httr::content(result)
+result %>% 
+  content()
 ~~~
 {: .language-r}
 
 
 
 ~~~
-[1] "[{\"id\":\"1\",\"description\":\"People\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"2\",\"description\":\"Labour and income\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"3\",\"description\":\"Economy\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"4\",\"description\":\"Social conditions\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"5\",\"description\":\"Education and research\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"6\",\"description\":\"Business\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"7\",\"description\":\"Transport\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"8\",\"description\":\"Culture and leisure\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"9\",\"description\":\"Environment and energy\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]},{\"id\":\"19\",\"description\":\"Other\",\"active\":true,\"hasSubjects\":true,\"subjects\":[]}]"
+Error in content(.): could not find function "content"
 ~~~
-{: .output}
+{: .error}
 More informative, but not really easy to read. 
 
 The library `jsonlite` has a function that converts this to something readable:
 
 
 ~~~
-jsonlite::fromJSON(httr::content(result))
+result %>% 
+  content() %>% 
+  fromJSON()
 ~~~
 {: .language-r}
 
 
 
 ~~~
-   id            description active hasSubjects subjects
-1   1                 People   TRUE        TRUE     NULL
-2   2      Labour and income   TRUE        TRUE     NULL
-3   3                Economy   TRUE        TRUE     NULL
-4   4      Social conditions   TRUE        TRUE     NULL
-5   5 Education and research   TRUE        TRUE     NULL
-6   6               Business   TRUE        TRUE     NULL
-7   7              Transport   TRUE        TRUE     NULL
-8   8    Culture and leisure   TRUE        TRUE     NULL
-9   9 Environment and energy   TRUE        TRUE     NULL
-10 19                  Other   TRUE        TRUE     NULL
+Error in fromJSON(.): could not find function "fromJSON"
 ~~~
-{: .output}
+{: .error}
 
 A nice dataframe with the ten major subjects in the databases of Statistics Denmark.
 
 Subject 1 contains information about populations and elections.
 
-There are sub-subjects under that.
+There are sub-subjects under that. We can see that in the column `hasSubjects`
+
 We now modify our body that we send with the request, to return information about the first subject.
 
-We need to make sure that the number of the subject, `1` is intepreted as it is. This is a little bit of mysterious handwaving - we simply put the 1 inside the function `I()` and stuff works.
+We need to make sure that the number of the subject, `1` is intepreted as it is. 
+This is a little bit of mysterious handwaving - we simply put the 1 inside the 
+function `I()` and stuff works.
 
 
 ~~~
@@ -215,13 +220,37 @@ our_body <- list(lang = "en", recursive = F,
 ~~~
 {: .language-r}
 
+
+> ## I()
+> I() isolates - or insulates - the contents of I() from the gaze of R's parsing code.
+> Basically it prevents R from doing stuff to the content that we dont want it to.
+> In this specific case, the POST() function would convert the vector 1, with length
+> 1, to a scalar, the more basic data type in R, that hold only one, single, atomic
+> value at a time.
+{: .callout}
+
+
+
 Note that it is important that we tell the POST function that the body is the body:
 
 
 ~~~
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
+~~~
+{: .language-r}
+
+
+
+~~~
+Error in fromJSON(.): could not find function "fromJSON"
+~~~
+{: .error}
+
+
+
+~~~
 data
 ~~~
 {: .language-r}
@@ -229,14 +258,196 @@ data
 
 
 ~~~
-  id description active hasSubjects
-1  1      People   TRUE        TRUE
-                                                                                                                                                                                                                                                      subjects
-1 3401, 3407, 3410, 3415, 3412, 3411, 3428, 3409, Population, Households, families and children, Migration, Housing, Health, Democracy, National church, Names, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
+function (..., list = character(), package = NULL, lib.loc = NULL, 
+    verbose = getOption("verbose"), envir = .GlobalEnv, overwrite = TRUE) 
+{
+    fileExt <- function(x) {
+        db <- grepl("\\.[^.]+\\.(gz|bz2|xz)$", x)
+        ans <- sub(".*\\.", "", x)
+        ans[db] <- sub(".*\\.([^.]+\\.)(gz|bz2|xz)$", "\\1\\2", 
+            x[db])
+        ans
+    }
+    my_read_table <- function(...) {
+        lcc <- Sys.getlocale("LC_COLLATE")
+        on.exit(Sys.setlocale("LC_COLLATE", lcc))
+        Sys.setlocale("LC_COLLATE", "C")
+        read.table(...)
+    }
+    stopifnot(is.character(list))
+    names <- c(as.character(substitute(list(...))[-1L]), list)
+    if (!is.null(package)) {
+        if (!is.character(package)) 
+            stop("'package' must be a character vector or NULL")
+    }
+    paths <- find.package(package, lib.loc, verbose = verbose)
+    if (is.null(lib.loc)) 
+        paths <- c(path.package(package, TRUE), if (!length(package)) getwd(), 
+            paths)
+    paths <- unique(normalizePath(paths[file.exists(paths)]))
+    paths <- paths[dir.exists(file.path(paths, "data"))]
+    dataExts <- tools:::.make_file_exts("data")
+    if (length(names) == 0L) {
+        db <- matrix(character(), nrow = 0L, ncol = 4L)
+        for (path in paths) {
+            entries <- NULL
+            packageName <- if (file_test("-f", file.path(path, 
+                "DESCRIPTION"))) 
+                basename(path)
+            else "."
+            if (file_test("-f", INDEX <- file.path(path, "Meta", 
+                "data.rds"))) {
+                entries <- readRDS(INDEX)
+            }
+            else {
+                dataDir <- file.path(path, "data")
+                entries <- tools::list_files_with_type(dataDir, 
+                  "data")
+                if (length(entries)) {
+                  entries <- unique(tools::file_path_sans_ext(basename(entries)))
+                  entries <- cbind(entries, "")
+                }
+            }
+            if (NROW(entries)) {
+                if (is.matrix(entries) && ncol(entries) == 2L) 
+                  db <- rbind(db, cbind(packageName, dirname(path), 
+                    entries))
+                else warning(gettextf("data index for package %s is invalid and will be ignored", 
+                  sQuote(packageName)), domain = NA, call. = FALSE)
+            }
+        }
+        colnames(db) <- c("Package", "LibPath", "Item", "Title")
+        footer <- if (missing(package)) 
+            paste0("Use ", sQuote(paste("data(package =", ".packages(all.available = TRUE))")), 
+                "\n", "to list the data sets in all *available* packages.")
+        else NULL
+        y <- list(title = "Data sets", header = NULL, results = db, 
+            footer = footer)
+        class(y) <- "packageIQR"
+        return(y)
+    }
+    paths <- file.path(paths, "data")
+    for (name in names) {
+        found <- FALSE
+        for (p in paths) {
+            tmp_env <- if (overwrite) 
+                envir
+            else new.env()
+            if (file_test("-f", file.path(p, "Rdata.rds"))) {
+                rds <- readRDS(file.path(p, "Rdata.rds"))
+                if (name %in% names(rds)) {
+                  found <- TRUE
+                  if (verbose) 
+                    message(sprintf("name=%s:\t found in Rdata.rds", 
+                      name), domain = NA)
+                  thispkg <- sub(".*/([^/]*)/data$", "\\1", p)
+                  thispkg <- sub("_.*$", "", thispkg)
+                  thispkg <- paste0("package:", thispkg)
+                  objs <- rds[[name]]
+                  lazyLoad(file.path(p, "Rdata"), envir = tmp_env, 
+                    filter = function(x) x %in% objs)
+                  break
+                }
+                else if (verbose) 
+                  message(sprintf("name=%s:\t NOT found in names() of Rdata.rds, i.e.,\n\t%s\n", 
+                    name, paste(names(rds), collapse = ",")), 
+                    domain = NA)
+            }
+            if (file_test("-f", file.path(p, "Rdata.zip"))) {
+                warning("zipped data found for package ", sQuote(basename(dirname(p))), 
+                  ".\nThat is defunct, so please re-install the package.", 
+                  domain = NA)
+                if (file_test("-f", fp <- file.path(p, "filelist"))) 
+                  files <- file.path(p, scan(fp, what = "", quiet = TRUE))
+                else {
+                  warning(gettextf("file 'filelist' is missing for directory %s", 
+                    sQuote(p)), domain = NA)
+                  next
+                }
+            }
+            else {
+                files <- list.files(p, full.names = TRUE)
+            }
+            files <- files[grep(name, files, fixed = TRUE)]
+            if (length(files) > 1L) {
+                o <- match(fileExt(files), dataExts, nomatch = 100L)
+                paths0 <- dirname(files)
+                paths0 <- factor(paths0, levels = unique(paths0))
+                files <- files[order(paths0, o)]
+            }
+            if (length(files)) {
+                for (file in files) {
+                  if (verbose) 
+                    message("name=", name, ":\t file= ...", .Platform$file.sep, 
+                      basename(file), "::\t", appendLF = FALSE, 
+                      domain = NA)
+                  ext <- fileExt(file)
+                  if (basename(file) != paste0(name, ".", ext)) 
+                    found <- FALSE
+                  else {
+                    found <- TRUE
+                    zfile <- file
+                    zipname <- file.path(dirname(file), "Rdata.zip")
+                    if (file.exists(zipname)) {
+                      Rdatadir <- tempfile("Rdata")
+                      dir.create(Rdatadir, showWarnings = FALSE)
+                      topic <- basename(file)
+                      rc <- .External(C_unzip, zipname, topic, 
+                        Rdatadir, FALSE, TRUE, FALSE, FALSE)
+                      if (rc == 0L) 
+                        zfile <- file.path(Rdatadir, topic)
+                    }
+                    if (zfile != file) 
+                      on.exit(unlink(zfile))
+                    switch(ext, R = , r = {
+                      library("utils")
+                      sys.source(zfile, chdir = TRUE, envir = tmp_env)
+                    }, RData = , rdata = , rda = load(zfile, 
+                      envir = tmp_env), TXT = , txt = , tab = , 
+                      tab.gz = , tab.bz2 = , tab.xz = , txt.gz = , 
+                      txt.bz2 = , txt.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, as.is = FALSE), envir = tmp_env), 
+                      CSV = , csv = , csv.gz = , csv.bz2 = , 
+                      csv.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, sep = ";", as.is = FALSE), 
+                        envir = tmp_env), found <- FALSE)
+                  }
+                  if (found) 
+                    break
+                }
+                if (verbose) 
+                  message(if (!found) 
+                    "*NOT* ", "found", domain = NA)
+            }
+            if (found) 
+                break
+        }
+        if (!found) {
+            warning(gettextf("data set %s not found", sQuote(name)), 
+                domain = NA)
+        }
+        else if (!overwrite) {
+            for (o in ls(envir = tmp_env, all.names = TRUE)) {
+                if (exists(o, envir = envir, inherits = FALSE)) 
+                  warning(gettextf("an object named %s already exists and will not be overwritten", 
+                    sQuote(o)))
+                else assign(o, get(o, envir = tmp_env, inherits = FALSE), 
+                  envir = envir)
+            }
+            rm(tmp_env)
+        }
+    }
+    invisible(names)
+}
+<bytecode: 0x5600899220a8>
+<environment: namespace:utils>
 ~~~
 {: .output}
 
-We now get at data frame containg a dataframe. We pick that out:
+Not that easy to see in this format, but the data frame contains a data frame.
+That is, in the column `subjects` the content is a data frame.
+
+We pick that out using the $-notation:
 
 ~~~
 data$subjects
@@ -246,20 +457,11 @@ data$subjects
 
 
 ~~~
-[[1]]
-    id                       description active hasSubjects subjects
-1 3401                        Population   TRUE        TRUE     NULL
-2 3407 Households, families and children   TRUE        TRUE     NULL
-3 3410                         Migration   TRUE        TRUE     NULL
-4 3415                           Housing   TRUE        TRUE     NULL
-5 3412                            Health   TRUE        TRUE     NULL
-6 3411                         Democracy   TRUE        TRUE     NULL
-7 3428                   National church   TRUE        TRUE     NULL
-8 3409                             Names   TRUE        TRUE     NULL
+Error in data$subjects: object of type 'closure' is not subsettable
 ~~~
-{: .output}
+{: .error}
 
-This was why the dollar-notation for subsetting dataframes is important.
+
 
 These are the sub-subjects of subject 1.
 
@@ -276,9 +478,22 @@ our_body <- list(lang = "en", recursive = F,
 
 
 ~~~
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
+~~~
+{: .language-r}
+
+
+
+~~~
+Error in fromJSON(.): could not find function "fromJSON"
+~~~
+{: .error}
+
+
+
+~~~
 data
 ~~~
 {: .language-r}
@@ -286,10 +501,189 @@ data
 
 
 ~~~
-    id description active hasSubjects
-1 3401  Population   TRUE        TRUE
-                                                                                                                                                                                                                                                                                              subjects
-1 20021, 20024, 20022, 20019, 20017, 20018, 20014, 20015, Population figures, Immigrants and their descendants, Population projections, Adoptions, Births, Fertility, Deaths, Life expectancy, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
+function (..., list = character(), package = NULL, lib.loc = NULL, 
+    verbose = getOption("verbose"), envir = .GlobalEnv, overwrite = TRUE) 
+{
+    fileExt <- function(x) {
+        db <- grepl("\\.[^.]+\\.(gz|bz2|xz)$", x)
+        ans <- sub(".*\\.", "", x)
+        ans[db] <- sub(".*\\.([^.]+\\.)(gz|bz2|xz)$", "\\1\\2", 
+            x[db])
+        ans
+    }
+    my_read_table <- function(...) {
+        lcc <- Sys.getlocale("LC_COLLATE")
+        on.exit(Sys.setlocale("LC_COLLATE", lcc))
+        Sys.setlocale("LC_COLLATE", "C")
+        read.table(...)
+    }
+    stopifnot(is.character(list))
+    names <- c(as.character(substitute(list(...))[-1L]), list)
+    if (!is.null(package)) {
+        if (!is.character(package)) 
+            stop("'package' must be a character vector or NULL")
+    }
+    paths <- find.package(package, lib.loc, verbose = verbose)
+    if (is.null(lib.loc)) 
+        paths <- c(path.package(package, TRUE), if (!length(package)) getwd(), 
+            paths)
+    paths <- unique(normalizePath(paths[file.exists(paths)]))
+    paths <- paths[dir.exists(file.path(paths, "data"))]
+    dataExts <- tools:::.make_file_exts("data")
+    if (length(names) == 0L) {
+        db <- matrix(character(), nrow = 0L, ncol = 4L)
+        for (path in paths) {
+            entries <- NULL
+            packageName <- if (file_test("-f", file.path(path, 
+                "DESCRIPTION"))) 
+                basename(path)
+            else "."
+            if (file_test("-f", INDEX <- file.path(path, "Meta", 
+                "data.rds"))) {
+                entries <- readRDS(INDEX)
+            }
+            else {
+                dataDir <- file.path(path, "data")
+                entries <- tools::list_files_with_type(dataDir, 
+                  "data")
+                if (length(entries)) {
+                  entries <- unique(tools::file_path_sans_ext(basename(entries)))
+                  entries <- cbind(entries, "")
+                }
+            }
+            if (NROW(entries)) {
+                if (is.matrix(entries) && ncol(entries) == 2L) 
+                  db <- rbind(db, cbind(packageName, dirname(path), 
+                    entries))
+                else warning(gettextf("data index for package %s is invalid and will be ignored", 
+                  sQuote(packageName)), domain = NA, call. = FALSE)
+            }
+        }
+        colnames(db) <- c("Package", "LibPath", "Item", "Title")
+        footer <- if (missing(package)) 
+            paste0("Use ", sQuote(paste("data(package =", ".packages(all.available = TRUE))")), 
+                "\n", "to list the data sets in all *available* packages.")
+        else NULL
+        y <- list(title = "Data sets", header = NULL, results = db, 
+            footer = footer)
+        class(y) <- "packageIQR"
+        return(y)
+    }
+    paths <- file.path(paths, "data")
+    for (name in names) {
+        found <- FALSE
+        for (p in paths) {
+            tmp_env <- if (overwrite) 
+                envir
+            else new.env()
+            if (file_test("-f", file.path(p, "Rdata.rds"))) {
+                rds <- readRDS(file.path(p, "Rdata.rds"))
+                if (name %in% names(rds)) {
+                  found <- TRUE
+                  if (verbose) 
+                    message(sprintf("name=%s:\t found in Rdata.rds", 
+                      name), domain = NA)
+                  thispkg <- sub(".*/([^/]*)/data$", "\\1", p)
+                  thispkg <- sub("_.*$", "", thispkg)
+                  thispkg <- paste0("package:", thispkg)
+                  objs <- rds[[name]]
+                  lazyLoad(file.path(p, "Rdata"), envir = tmp_env, 
+                    filter = function(x) x %in% objs)
+                  break
+                }
+                else if (verbose) 
+                  message(sprintf("name=%s:\t NOT found in names() of Rdata.rds, i.e.,\n\t%s\n", 
+                    name, paste(names(rds), collapse = ",")), 
+                    domain = NA)
+            }
+            if (file_test("-f", file.path(p, "Rdata.zip"))) {
+                warning("zipped data found for package ", sQuote(basename(dirname(p))), 
+                  ".\nThat is defunct, so please re-install the package.", 
+                  domain = NA)
+                if (file_test("-f", fp <- file.path(p, "filelist"))) 
+                  files <- file.path(p, scan(fp, what = "", quiet = TRUE))
+                else {
+                  warning(gettextf("file 'filelist' is missing for directory %s", 
+                    sQuote(p)), domain = NA)
+                  next
+                }
+            }
+            else {
+                files <- list.files(p, full.names = TRUE)
+            }
+            files <- files[grep(name, files, fixed = TRUE)]
+            if (length(files) > 1L) {
+                o <- match(fileExt(files), dataExts, nomatch = 100L)
+                paths0 <- dirname(files)
+                paths0 <- factor(paths0, levels = unique(paths0))
+                files <- files[order(paths0, o)]
+            }
+            if (length(files)) {
+                for (file in files) {
+                  if (verbose) 
+                    message("name=", name, ":\t file= ...", .Platform$file.sep, 
+                      basename(file), "::\t", appendLF = FALSE, 
+                      domain = NA)
+                  ext <- fileExt(file)
+                  if (basename(file) != paste0(name, ".", ext)) 
+                    found <- FALSE
+                  else {
+                    found <- TRUE
+                    zfile <- file
+                    zipname <- file.path(dirname(file), "Rdata.zip")
+                    if (file.exists(zipname)) {
+                      Rdatadir <- tempfile("Rdata")
+                      dir.create(Rdatadir, showWarnings = FALSE)
+                      topic <- basename(file)
+                      rc <- .External(C_unzip, zipname, topic, 
+                        Rdatadir, FALSE, TRUE, FALSE, FALSE)
+                      if (rc == 0L) 
+                        zfile <- file.path(Rdatadir, topic)
+                    }
+                    if (zfile != file) 
+                      on.exit(unlink(zfile))
+                    switch(ext, R = , r = {
+                      library("utils")
+                      sys.source(zfile, chdir = TRUE, envir = tmp_env)
+                    }, RData = , rdata = , rda = load(zfile, 
+                      envir = tmp_env), TXT = , txt = , tab = , 
+                      tab.gz = , tab.bz2 = , tab.xz = , txt.gz = , 
+                      txt.bz2 = , txt.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, as.is = FALSE), envir = tmp_env), 
+                      CSV = , csv = , csv.gz = , csv.bz2 = , 
+                      csv.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, sep = ";", as.is = FALSE), 
+                        envir = tmp_env), found <- FALSE)
+                  }
+                  if (found) 
+                    break
+                }
+                if (verbose) 
+                  message(if (!found) 
+                    "*NOT* ", "found", domain = NA)
+            }
+            if (found) 
+                break
+        }
+        if (!found) {
+            warning(gettextf("data set %s not found", sQuote(name)), 
+                domain = NA)
+        }
+        else if (!overwrite) {
+            for (o in ls(envir = tmp_env, all.names = TRUE)) {
+                if (exists(o, envir = envir, inherits = FALSE)) 
+                  warning(gettextf("an object named %s already exists and will not be overwritten", 
+                    sQuote(o)))
+                else assign(o, get(o, envir = tmp_env, inherits = FALSE), 
+                  envir = envir)
+            }
+            rm(tmp_env)
+        }
+    }
+    invisible(names)
+}
+<bytecode: 0x5600899220a8>
+<environment: namespace:utils>
 ~~~
 {: .output}
 
@@ -303,18 +697,10 @@ data$subjects
 
 
 ~~~
-[[1]]
-     id                      description active hasSubjects subjects
-1 20021               Population figures   TRUE       FALSE     NULL
-2 20024 Immigrants and their descendants   TRUE       FALSE     NULL
-3 20022           Population projections   TRUE       FALSE     NULL
-4 20019                        Adoptions  FALSE       FALSE     NULL
-5 20017                           Births   TRUE       FALSE     NULL
-6 20018                        Fertility   TRUE       FALSE     NULL
-7 20014                           Deaths   TRUE       FALSE     NULL
-8 20015                  Life expectancy   TRUE       FALSE     NULL
+Error in data$subjects: object of type 'closure' is not subsettable
 ~~~
-{: .output}
+{: .error}
+
 And now we are at the bottom. 20021 Population figures does not have any sub-sub-subjects.
 
 Next, let us take a look at the tables contained under subject 20021.
@@ -330,82 +716,36 @@ endpoint <- "http://api.statbank.dk/v1/tables"
 
 ~~~
 our_body <- list(lang = "en", subjects = I(20021))
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
-data
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
 ~~~
 {: .language-r}
 
 
 
 ~~~
-         id                                                          text
-1    FOLK1A                    Population at the first day of the quarter
-2   FOLK1AM                      Population at the first day of the month
-3     FOLK3                                         Population 1. January
-4  FOLK3FOD                                         Population 1. January
-5      BEF5                                         Population 1. January
-6        FT                          Population figures from the censuses
-7       BY1                                         Population 1. January
-8       BY2                                         Population 1. January
-9       BY3                                         Population 1. January
-10      KM1                    Population at the first day of the quarter
-11    SOGN1                                         Population 1. January
-12   SOGN10                                         Population 1. January
-13     BEF4                                         Population 1. January
-14    BEF5F People born in Faroe Islands and living in Denmark 1. January
-15    BEF5G     People born in Greenland and living in Denmark 1. January
-16    BEV22                   Summary vital statistics (provisional data)
-17   BEV107                                      Summary vital statistics
-18 KMSTA003                                      Summary vital statistics
-19   GALDER                                                   Average age
-20 KMGALDER                                                   Average age
-21    HISB3                                      Summary vital statistics
-     unit             updated firstPeriod latestPeriod active
-1  Number 2022-05-12T08:00:00      2008Q1       2022Q2   TRUE
-2  Number 2022-07-07T08:00:00     2021M10      2022M06   TRUE
-3  Number 2022-02-11T08:00:00        2008         2022   TRUE
-4  Number 2022-03-18T08:00:00        2008         2022   TRUE
-5  Number 2022-02-11T08:00:00        1990         2022   TRUE
-6  Number 2022-02-11T08:00:00        1769         2022   TRUE
-7  Number 2022-05-27T08:00:00        2010         2022   TRUE
-8  Number 2022-05-27T08:00:00        2010         2022   TRUE
-9       - 2022-07-14T08:00:00        2017         2022   TRUE
-10 Number 2022-05-11T08:00:00      2007Q1       2022Q2   TRUE
-11 Number 2022-02-17T08:00:00        2010         2022   TRUE
-12 Number 2021-09-22T08:00:00        1925         2021   TRUE
-13 Number 2022-05-16T08:00:00        1901         2022   TRUE
-14 Number 2022-02-11T08:00:00        2008         2022   TRUE
-15 Number 2022-02-11T08:00:00        2008         2022   TRUE
-16 Number 2022-05-11T08:00:00      2007Q2       2022Q1   TRUE
-17 Number 2022-02-11T08:00:00        2006         2021   TRUE
-18 Number 2022-02-17T08:00:00        2015         2021   TRUE
-19   Avg. 2022-02-11T08:00:00        2005         2022   TRUE
-20   Avg. 2022-02-17T08:00:00        2007         2022   TRUE
-21 Number 2022-02-11T08:00:00        1901         2022   TRUE
-                                                              variables
-1                                region, sex, age, marital status, time
-2                                                region, sex, age, time
-3                        day of birth, birth month, year of birth, time
-4                     day of birth, birth month, country of birth, time
-5                                      sex, age, country of birth, time
-6                                                   national part, time
-7                                 urban and rural areas, age, sex, time
-8                               municipality, city size, age, sex, time
-9  urban and rural areas, population, area and population density, time
-10                          parish, member of the National Church, time
-11                                               parish, sex, age, time
-12                                                         parish, time
-13                                                        islands, time
-14                               sex, age, parents place of birth, time
-15                               sex, age, parents place of birth, time
-16                                  region, type of movement, sex, time
-17                                  region, type of movement, sex, time
-18                                              parish, movements, time
-19                                              municipality, sex, time
-20                                                    parish, sex, time
-21                                               type of movement, time
+Error in fromJSON(.): could not find function "fromJSON"
+~~~
+{: .error}
+
+
+
+~~~
+data %>% head()
+~~~
+{: .language-r}
+
+
+
+~~~
+                                                                            
+1 function (..., list = character(), package = NULL, lib.loc = NULL,        
+2     verbose = getOption("verbose"), envir = .GlobalEnv, overwrite = TRUE) 
+3 {                                                                         
+4     fileExt <- function(x) {                                              
+5         db <- grepl("\\\\.[^.]+\\\\.(gz|bz2|xz)$", x)                     
+6         ans <- sub(".*\\\\.", "", x)                                      
 ~~~
 {: .output}
 
@@ -421,9 +761,22 @@ endpoint <- "http://api.statbank.dk/v1/tableinfo"
 
 ~~~
 our_body <- list(lang = "en", table = "FOLK1A")
-data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
-  httr::content() %>% 
-  jsonlite::fromJSON()
+data <- POST(endpoint, body=our_body, encode = "json") %>% 
+  content() %>% 
+  fromJSON()
+~~~
+{: .language-r}
+
+
+
+~~~
+Error in fromJSON(.): could not find function "fromJSON"
+~~~
+{: .error}
+
+
+
+~~~
 data
 ~~~
 {: .language-r}
@@ -431,55 +784,189 @@ data
 
 
 ~~~
-$id
-[1] "FOLK1A"
-
-$text
-[1] "Population at the first day of the quarter"
-
-$description
-[1] "Population at the first day of the quarter by region, sex, age, marital status and time"
-
-$unit
-[1] "Number"
-
-$suppressedDataValue
-[1] "0"
-
-$updated
-[1] "2022-05-12T08:00:00"
-
-$active
-[1] TRUE
-
-$contacts
-           name       phone       mail
-1 Dorthe Larsen +4539173307 dla@dst.dk
-
-$documentation
-$documentation$id
-[1] "4a12721d-a8b0-4bde-82d7-1d1c6f319de3"
-
-$documentation$url
-[1] "https://www.dst.dk/documentationofstatistics/4a12721d-a8b0-4bde-82d7-1d1c6f319de3"
-
-
-$footnote
-NULL
-
-$variables
-          id           text elimination  time                     map
-1     OMRÅDE         region        TRUE FALSE denmark_municipality_07
-2        KØN            sex        TRUE FALSE                    <NA>
-3      ALDER            age        TRUE FALSE                    <NA>
-4 CIVILSTAND marital status        TRUE FALSE                    <NA>
-5        Tid           time       FALSE  TRUE                    <NA>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          values
-1                                                                                                                                                                                      000, 084, 101, 147, 155, 185, 165, 151, 153, 157, 159, 161, 163, 167, 169, 183, 173, 175, 187, 201, 240, 210, 250, 190, 270, 260, 217, 219, 223, 230, 400, 411, 085, 253, 259, 350, 265, 269, 320, 376, 316, 326, 360, 370, 306, 329, 330, 340, 336, 390, 083, 420, 430, 440, 482, 410, 480, 450, 461, 479, 492, 530, 561, 563, 607, 510, 621, 540, 550, 573, 575, 630, 580, 082, 710, 766, 615, 707, 727, 730, 741, 740, 746, 706, 751, 657, 661, 756, 665, 760, 779, 671, 791, 081, 810, 813, 860, 849, 825, 846, 773, 840, 787, 820, 851, All Denmark, Region Hovedstaden, Copenhagen, Frederiksberg, Dragør, Tårnby, Albertslund, Ballerup, Brøndby, Gentofte, Gladsaxe, Glostrup, Herlev, Hvidovre, Høje-Taastrup, Ishøj, Lyngby-Taarbæk, Rødovre, Vallensbæk, Allerød, Egedal, Fredensborg, Frederikssund, Furesø, Gribskov, Halsnæs, Helsingør, Hillerød, Hørsholm, Rudersdal, Bornholm, Christiansø, Region Sjælland, Greve, Køge, Lejre, Roskilde, Solrød, Faxe, Guldborgsund, Holbæk, Kalundborg, Lolland, Næstved, Odsherred, Ringsted, Slagelse, Sorø, Stevns, Vordingborg, Region Syddanmark, Assens, Faaborg-Midtfyn, Kerteminde, Langeland, Middelfart, Nordfyns, Nyborg, Odense, Svendborg, Ærø, Billund, Esbjerg, Fanø, Fredericia, Haderslev, Kolding, Sønderborg, Tønder, Varde, Vejen, Vejle, Aabenraa, Region Midtjylland, Favrskov, Hedensted, Horsens, Norddjurs, Odder, Randers, Samsø, Silkeborg, Skanderborg, Syddjurs, Aarhus, Herning, Holstebro, Ikast-Brande, Lemvig, Ringkøbing-Skjern, Skive, Struer, Viborg, Region Nordjylland, Brønderslev, Frederikshavn, Hjørring, Jammerbugt, Læsø, Mariagerfjord, Morsø, Rebild, Thisted, Vesthimmerlands, Aalborg
-2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   TOT, 1, 2, Total, Men, Women
-3 IALT, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, Total, 0 years, 1 year, 2 years, 3 years, 4 years, 5 years, 6 years, 7 years, 8 years, 9 years, 10 years, 11 years, 12 years, 13 years, 14 years, 15 years, 16 years, 17 years, 18 years, 19 years, 20 years, 21 years, 22 years, 23 years, 24 years, 25 years, 26 years, 27 years, 28 years, 29 years, 30 years, 31 years, 32 years, 33 years, 34 years, 35 years, 36 years, 37 years, 38 years, 39 years, 40 years, 41 years, 42 years, 43 years, 44 years, 45 years, 46 years, 47 years, 48 years, 49 years, 50 years, 51 years, 52 years, 53 years, 54 years, 55 years, 56 years, 57 years, 58 years, 59 years, 60 years, 61 years, 62 years, 63 years, 64 years, 65 years, 66 years, 67 years, 68 years, 69 years, 70 years, 71 years, 72 years, 73 years, 74 years, 75 years, 76 years, 77 years, 78 years, 79 years, 80 years, 81 years, 82 years, 83 years, 84 years, 85 years, 86 years, 87 years, 88 years, 89 years, 90 years, 91 years, 92 years, 93 years, 94 years, 95 years, 96 years, 97 years, 98 years, 99 years, 100 years, 101 years, 102 years, 103 years, 104 years, 105 years, 106 years, 107 years, 108 years, 109 years, 110 years, 111 years, 112 years, 113 years, 114 years, 115 years, 116 years, 117 years, 118 years, 119 years, 120 years, 121 years, 122 years, 123 years, 124 years, 125 years
-4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    TOT, U, G, E, F, Total, Never married, Married/separated, Widowed, Divorced
-5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 2008K1, 2008K2, 2008K3, 2008K4, 2009K1, 2009K2, 2009K3, 2009K4, 2010K1, 2010K2, 2010K3, 2010K4, 2011K1, 2011K2, 2011K3, 2011K4, 2012K1, 2012K2, 2012K3, 2012K4, 2013K1, 2013K2, 2013K3, 2013K4, 2014K1, 2014K2, 2014K3, 2014K4, 2015K1, 2015K2, 2015K3, 2015K4, 2016K1, 2016K2, 2016K3, 2016K4, 2017K1, 2017K2, 2017K3, 2017K4, 2018K1, 2018K2, 2018K3, 2018K4, 2019K1, 2019K2, 2019K3, 2019K4, 2020K1, 2020K2, 2020K3, 2020K4, 2021K1, 2021K2, 2021K3, 2021K4, 2022K1, 2022K2, 2008Q1, 2008Q2, 2008Q3, 2008Q4, 2009Q1, 2009Q2, 2009Q3, 2009Q4, 2010Q1, 2010Q2, 2010Q3, 2010Q4, 2011Q1, 2011Q2, 2011Q3, 2011Q4, 2012Q1, 2012Q2, 2012Q3, 2012Q4, 2013Q1, 2013Q2, 2013Q3, 2013Q4, 2014Q1, 2014Q2, 2014Q3, 2014Q4, 2015Q1, 2015Q2, 2015Q3, 2015Q4, 2016Q1, 2016Q2, 2016Q3, 2016Q4, 2017Q1, 2017Q2, 2017Q3, 2017Q4, 2018Q1, 2018Q2, 2018Q3, 2018Q4, 2019Q1, 2019Q2, 2019Q3, 2019Q4, 2020Q1, 2020Q2, 2020Q3, 2020Q4, 2021Q1, 2021Q2, 2021Q3, 2021Q4, 2022Q1, 2022Q2
+function (..., list = character(), package = NULL, lib.loc = NULL, 
+    verbose = getOption("verbose"), envir = .GlobalEnv, overwrite = TRUE) 
+{
+    fileExt <- function(x) {
+        db <- grepl("\\.[^.]+\\.(gz|bz2|xz)$", x)
+        ans <- sub(".*\\.", "", x)
+        ans[db] <- sub(".*\\.([^.]+\\.)(gz|bz2|xz)$", "\\1\\2", 
+            x[db])
+        ans
+    }
+    my_read_table <- function(...) {
+        lcc <- Sys.getlocale("LC_COLLATE")
+        on.exit(Sys.setlocale("LC_COLLATE", lcc))
+        Sys.setlocale("LC_COLLATE", "C")
+        read.table(...)
+    }
+    stopifnot(is.character(list))
+    names <- c(as.character(substitute(list(...))[-1L]), list)
+    if (!is.null(package)) {
+        if (!is.character(package)) 
+            stop("'package' must be a character vector or NULL")
+    }
+    paths <- find.package(package, lib.loc, verbose = verbose)
+    if (is.null(lib.loc)) 
+        paths <- c(path.package(package, TRUE), if (!length(package)) getwd(), 
+            paths)
+    paths <- unique(normalizePath(paths[file.exists(paths)]))
+    paths <- paths[dir.exists(file.path(paths, "data"))]
+    dataExts <- tools:::.make_file_exts("data")
+    if (length(names) == 0L) {
+        db <- matrix(character(), nrow = 0L, ncol = 4L)
+        for (path in paths) {
+            entries <- NULL
+            packageName <- if (file_test("-f", file.path(path, 
+                "DESCRIPTION"))) 
+                basename(path)
+            else "."
+            if (file_test("-f", INDEX <- file.path(path, "Meta", 
+                "data.rds"))) {
+                entries <- readRDS(INDEX)
+            }
+            else {
+                dataDir <- file.path(path, "data")
+                entries <- tools::list_files_with_type(dataDir, 
+                  "data")
+                if (length(entries)) {
+                  entries <- unique(tools::file_path_sans_ext(basename(entries)))
+                  entries <- cbind(entries, "")
+                }
+            }
+            if (NROW(entries)) {
+                if (is.matrix(entries) && ncol(entries) == 2L) 
+                  db <- rbind(db, cbind(packageName, dirname(path), 
+                    entries))
+                else warning(gettextf("data index for package %s is invalid and will be ignored", 
+                  sQuote(packageName)), domain = NA, call. = FALSE)
+            }
+        }
+        colnames(db) <- c("Package", "LibPath", "Item", "Title")
+        footer <- if (missing(package)) 
+            paste0("Use ", sQuote(paste("data(package =", ".packages(all.available = TRUE))")), 
+                "\n", "to list the data sets in all *available* packages.")
+        else NULL
+        y <- list(title = "Data sets", header = NULL, results = db, 
+            footer = footer)
+        class(y) <- "packageIQR"
+        return(y)
+    }
+    paths <- file.path(paths, "data")
+    for (name in names) {
+        found <- FALSE
+        for (p in paths) {
+            tmp_env <- if (overwrite) 
+                envir
+            else new.env()
+            if (file_test("-f", file.path(p, "Rdata.rds"))) {
+                rds <- readRDS(file.path(p, "Rdata.rds"))
+                if (name %in% names(rds)) {
+                  found <- TRUE
+                  if (verbose) 
+                    message(sprintf("name=%s:\t found in Rdata.rds", 
+                      name), domain = NA)
+                  thispkg <- sub(".*/([^/]*)/data$", "\\1", p)
+                  thispkg <- sub("_.*$", "", thispkg)
+                  thispkg <- paste0("package:", thispkg)
+                  objs <- rds[[name]]
+                  lazyLoad(file.path(p, "Rdata"), envir = tmp_env, 
+                    filter = function(x) x %in% objs)
+                  break
+                }
+                else if (verbose) 
+                  message(sprintf("name=%s:\t NOT found in names() of Rdata.rds, i.e.,\n\t%s\n", 
+                    name, paste(names(rds), collapse = ",")), 
+                    domain = NA)
+            }
+            if (file_test("-f", file.path(p, "Rdata.zip"))) {
+                warning("zipped data found for package ", sQuote(basename(dirname(p))), 
+                  ".\nThat is defunct, so please re-install the package.", 
+                  domain = NA)
+                if (file_test("-f", fp <- file.path(p, "filelist"))) 
+                  files <- file.path(p, scan(fp, what = "", quiet = TRUE))
+                else {
+                  warning(gettextf("file 'filelist' is missing for directory %s", 
+                    sQuote(p)), domain = NA)
+                  next
+                }
+            }
+            else {
+                files <- list.files(p, full.names = TRUE)
+            }
+            files <- files[grep(name, files, fixed = TRUE)]
+            if (length(files) > 1L) {
+                o <- match(fileExt(files), dataExts, nomatch = 100L)
+                paths0 <- dirname(files)
+                paths0 <- factor(paths0, levels = unique(paths0))
+                files <- files[order(paths0, o)]
+            }
+            if (length(files)) {
+                for (file in files) {
+                  if (verbose) 
+                    message("name=", name, ":\t file= ...", .Platform$file.sep, 
+                      basename(file), "::\t", appendLF = FALSE, 
+                      domain = NA)
+                  ext <- fileExt(file)
+                  if (basename(file) != paste0(name, ".", ext)) 
+                    found <- FALSE
+                  else {
+                    found <- TRUE
+                    zfile <- file
+                    zipname <- file.path(dirname(file), "Rdata.zip")
+                    if (file.exists(zipname)) {
+                      Rdatadir <- tempfile("Rdata")
+                      dir.create(Rdatadir, showWarnings = FALSE)
+                      topic <- basename(file)
+                      rc <- .External(C_unzip, zipname, topic, 
+                        Rdatadir, FALSE, TRUE, FALSE, FALSE)
+                      if (rc == 0L) 
+                        zfile <- file.path(Rdatadir, topic)
+                    }
+                    if (zfile != file) 
+                      on.exit(unlink(zfile))
+                    switch(ext, R = , r = {
+                      library("utils")
+                      sys.source(zfile, chdir = TRUE, envir = tmp_env)
+                    }, RData = , rdata = , rda = load(zfile, 
+                      envir = tmp_env), TXT = , txt = , tab = , 
+                      tab.gz = , tab.bz2 = , tab.xz = , txt.gz = , 
+                      txt.bz2 = , txt.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, as.is = FALSE), envir = tmp_env), 
+                      CSV = , csv = , csv.gz = , csv.bz2 = , 
+                      csv.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, sep = ";", as.is = FALSE), 
+                        envir = tmp_env), found <- FALSE)
+                  }
+                  if (found) 
+                    break
+                }
+                if (verbose) 
+                  message(if (!found) 
+                    "*NOT* ", "found", domain = NA)
+            }
+            if (found) 
+                break
+        }
+        if (!found) {
+            warning(gettextf("data set %s not found", sQuote(name)), 
+                domain = NA)
+        }
+        else if (!overwrite) {
+            for (o in ls(envir = tmp_env, all.names = TRUE)) {
+                if (exists(o, envir = envir, inherits = FALSE)) 
+                  warning(gettextf("an object named %s already exists and will not be overwritten", 
+                    sQuote(o)))
+                else assign(o, get(o, envir = tmp_env, inherits = FALSE), 
+                  envir = envir)
+            }
+            rm(tmp_env)
+        }
+    }
+    invisible(names)
+}
+<bytecode: 0x5600899220a8>
+<environment: namespace:utils>
 ~~~
 {: .output}
 
@@ -535,15 +1022,22 @@ And the call:
 
 
 ~~~
-data <- httr::POST(endpoint, body=our_body, encode = "json")
+data <- POST(endpoint, body=our_body, encode = "json")
 ~~~
 {: .language-r}
+
+
+
+~~~
+Error in POST(endpoint, body = our_body, encode = "json"): could not find function "POST"
+~~~
+{: .error}
 
 The data is returned as csv - we defined that in "our_body", so we now need to extract it a bit differently:
 
 ~~~
 data <- data %>% 
-  httr::content(type = "text") %>% 
+  content(type = "text") %>% 
   read_csv2()
 ~~~
 {: .language-r}
@@ -558,23 +1052,9 @@ data <- data %>%
 
 
 ~~~
-No encoding supplied: defaulting to UTF-8.
+Error in content(., type = "text"): could not find function "content"
 ~~~
-{: .output}
-
-
-
-~~~
-Rows: 24360 Columns: 4
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ";"
-chr (3): OMRÅDE, CIVILSTAND, TID
-dbl (1): INDHOLD
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-~~~
-{: .output}
+{: .error}
 
 
 
@@ -586,21 +1066,189 @@ data
 
 
 ~~~
-# A tibble: 24,360 × 4
-   OMRÅDE      CIVILSTAND    TID    INDHOLD
-   <chr>       <chr>         <chr>    <dbl>
- 1 All Denmark Never married 2008Q1 2552700
- 2 All Denmark Never married 2008Q2 2563134
- 3 All Denmark Never married 2008Q3 2564705
- 4 All Denmark Never married 2008Q4 2568255
- 5 All Denmark Never married 2009Q1 2575185
- 6 All Denmark Never married 2009Q2 2584993
- 7 All Denmark Never married 2009Q3 2584560
- 8 All Denmark Never married 2009Q4 2588198
- 9 All Denmark Never married 2010Q1 2593172
-10 All Denmark Never married 2010Q2 2604129
-# … with 24,350 more rows
-# ℹ Use `print(n = ...)` to see more rows
+function (..., list = character(), package = NULL, lib.loc = NULL, 
+    verbose = getOption("verbose"), envir = .GlobalEnv, overwrite = TRUE) 
+{
+    fileExt <- function(x) {
+        db <- grepl("\\.[^.]+\\.(gz|bz2|xz)$", x)
+        ans <- sub(".*\\.", "", x)
+        ans[db] <- sub(".*\\.([^.]+\\.)(gz|bz2|xz)$", "\\1\\2", 
+            x[db])
+        ans
+    }
+    my_read_table <- function(...) {
+        lcc <- Sys.getlocale("LC_COLLATE")
+        on.exit(Sys.setlocale("LC_COLLATE", lcc))
+        Sys.setlocale("LC_COLLATE", "C")
+        read.table(...)
+    }
+    stopifnot(is.character(list))
+    names <- c(as.character(substitute(list(...))[-1L]), list)
+    if (!is.null(package)) {
+        if (!is.character(package)) 
+            stop("'package' must be a character vector or NULL")
+    }
+    paths <- find.package(package, lib.loc, verbose = verbose)
+    if (is.null(lib.loc)) 
+        paths <- c(path.package(package, TRUE), if (!length(package)) getwd(), 
+            paths)
+    paths <- unique(normalizePath(paths[file.exists(paths)]))
+    paths <- paths[dir.exists(file.path(paths, "data"))]
+    dataExts <- tools:::.make_file_exts("data")
+    if (length(names) == 0L) {
+        db <- matrix(character(), nrow = 0L, ncol = 4L)
+        for (path in paths) {
+            entries <- NULL
+            packageName <- if (file_test("-f", file.path(path, 
+                "DESCRIPTION"))) 
+                basename(path)
+            else "."
+            if (file_test("-f", INDEX <- file.path(path, "Meta", 
+                "data.rds"))) {
+                entries <- readRDS(INDEX)
+            }
+            else {
+                dataDir <- file.path(path, "data")
+                entries <- tools::list_files_with_type(dataDir, 
+                  "data")
+                if (length(entries)) {
+                  entries <- unique(tools::file_path_sans_ext(basename(entries)))
+                  entries <- cbind(entries, "")
+                }
+            }
+            if (NROW(entries)) {
+                if (is.matrix(entries) && ncol(entries) == 2L) 
+                  db <- rbind(db, cbind(packageName, dirname(path), 
+                    entries))
+                else warning(gettextf("data index for package %s is invalid and will be ignored", 
+                  sQuote(packageName)), domain = NA, call. = FALSE)
+            }
+        }
+        colnames(db) <- c("Package", "LibPath", "Item", "Title")
+        footer <- if (missing(package)) 
+            paste0("Use ", sQuote(paste("data(package =", ".packages(all.available = TRUE))")), 
+                "\n", "to list the data sets in all *available* packages.")
+        else NULL
+        y <- list(title = "Data sets", header = NULL, results = db, 
+            footer = footer)
+        class(y) <- "packageIQR"
+        return(y)
+    }
+    paths <- file.path(paths, "data")
+    for (name in names) {
+        found <- FALSE
+        for (p in paths) {
+            tmp_env <- if (overwrite) 
+                envir
+            else new.env()
+            if (file_test("-f", file.path(p, "Rdata.rds"))) {
+                rds <- readRDS(file.path(p, "Rdata.rds"))
+                if (name %in% names(rds)) {
+                  found <- TRUE
+                  if (verbose) 
+                    message(sprintf("name=%s:\t found in Rdata.rds", 
+                      name), domain = NA)
+                  thispkg <- sub(".*/([^/]*)/data$", "\\1", p)
+                  thispkg <- sub("_.*$", "", thispkg)
+                  thispkg <- paste0("package:", thispkg)
+                  objs <- rds[[name]]
+                  lazyLoad(file.path(p, "Rdata"), envir = tmp_env, 
+                    filter = function(x) x %in% objs)
+                  break
+                }
+                else if (verbose) 
+                  message(sprintf("name=%s:\t NOT found in names() of Rdata.rds, i.e.,\n\t%s\n", 
+                    name, paste(names(rds), collapse = ",")), 
+                    domain = NA)
+            }
+            if (file_test("-f", file.path(p, "Rdata.zip"))) {
+                warning("zipped data found for package ", sQuote(basename(dirname(p))), 
+                  ".\nThat is defunct, so please re-install the package.", 
+                  domain = NA)
+                if (file_test("-f", fp <- file.path(p, "filelist"))) 
+                  files <- file.path(p, scan(fp, what = "", quiet = TRUE))
+                else {
+                  warning(gettextf("file 'filelist' is missing for directory %s", 
+                    sQuote(p)), domain = NA)
+                  next
+                }
+            }
+            else {
+                files <- list.files(p, full.names = TRUE)
+            }
+            files <- files[grep(name, files, fixed = TRUE)]
+            if (length(files) > 1L) {
+                o <- match(fileExt(files), dataExts, nomatch = 100L)
+                paths0 <- dirname(files)
+                paths0 <- factor(paths0, levels = unique(paths0))
+                files <- files[order(paths0, o)]
+            }
+            if (length(files)) {
+                for (file in files) {
+                  if (verbose) 
+                    message("name=", name, ":\t file= ...", .Platform$file.sep, 
+                      basename(file), "::\t", appendLF = FALSE, 
+                      domain = NA)
+                  ext <- fileExt(file)
+                  if (basename(file) != paste0(name, ".", ext)) 
+                    found <- FALSE
+                  else {
+                    found <- TRUE
+                    zfile <- file
+                    zipname <- file.path(dirname(file), "Rdata.zip")
+                    if (file.exists(zipname)) {
+                      Rdatadir <- tempfile("Rdata")
+                      dir.create(Rdatadir, showWarnings = FALSE)
+                      topic <- basename(file)
+                      rc <- .External(C_unzip, zipname, topic, 
+                        Rdatadir, FALSE, TRUE, FALSE, FALSE)
+                      if (rc == 0L) 
+                        zfile <- file.path(Rdatadir, topic)
+                    }
+                    if (zfile != file) 
+                      on.exit(unlink(zfile))
+                    switch(ext, R = , r = {
+                      library("utils")
+                      sys.source(zfile, chdir = TRUE, envir = tmp_env)
+                    }, RData = , rdata = , rda = load(zfile, 
+                      envir = tmp_env), TXT = , txt = , tab = , 
+                      tab.gz = , tab.bz2 = , tab.xz = , txt.gz = , 
+                      txt.bz2 = , txt.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, as.is = FALSE), envir = tmp_env), 
+                      CSV = , csv = , csv.gz = , csv.bz2 = , 
+                      csv.xz = assign(name, my_read_table(zfile, 
+                        header = TRUE, sep = ";", as.is = FALSE), 
+                        envir = tmp_env), found <- FALSE)
+                  }
+                  if (found) 
+                    break
+                }
+                if (verbose) 
+                  message(if (!found) 
+                    "*NOT* ", "found", domain = NA)
+            }
+            if (found) 
+                break
+        }
+        if (!found) {
+            warning(gettextf("data set %s not found", sQuote(name)), 
+                domain = NA)
+        }
+        else if (!overwrite) {
+            for (o in ls(envir = tmp_env, all.names = TRUE)) {
+                if (exists(o, envir = envir, inherits = FALSE)) 
+                  warning(gettextf("an object named %s already exists and will not be overwritten", 
+                    sQuote(o)))
+                else assign(o, get(o, envir = tmp_env, inherits = FALSE), 
+                  envir = envir)
+            }
+            rm(tmp_env)
+        }
+    }
+    invisible(names)
+}
+<bytecode: 0x5600899220a8>
+<environment: namespace:utils>
 ~~~
 {: .output}
 
@@ -609,6 +1257,7 @@ Voila! We have a dataframe with information about how many persons in Denmark we
 That was a bit complicated. There are easier ways to do it.
 
 We will look at that shortly. So why do it this way? These techniques are the same techniques we use when we access an arbitrary other API. The fields, endpoints etc might be different. We might have an added complication of having to login to it. But the techniques can be reused.
+
 
 
 
