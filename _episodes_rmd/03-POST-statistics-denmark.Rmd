@@ -15,9 +15,7 @@ keypoints:
 source: Rmd
 questions:
 - "How do I get data from an API using the POST method?"
-editor_options: 
-  markdown: 
-    wrap: 72
+
 ---
 
 ```{r setup, include = F, echo=F}
@@ -210,7 +208,7 @@ our_body <- list(lang = "en", subjects = I(20021))
 data <- httr::POST(endpoint, body=our_body, encode = "json") %>% 
   httr::content() %>% 
   jsonlite::fromJSON()
-data
+data %>% head()
 ```
 
 There are 21 tables under this subject. Let us see what information we can get about table "FOLK1A":
