@@ -6,17 +6,17 @@ output:
   html_document:
     df_print: paged
 objectives:
-- Use a package to do the API-calls to Statistics Denmark
-- Connect to Statistics Denmark, and extract data
-- Create a list of lists to control the variables to be extracted
-- Using the danstat package
+- "Use a package to do the API-calls to Statistics Denmark"
+- "Connect to Statistics Denmark, and extract data"
+- "Create a list of lists to control the variables to be extracted"
+- "Using the danstat package"
 
 keypoints: 
-- Larger services often provide packages to make it easier to use their API
+- "Larger services often provide packages to make it easier to use their API"
 
 source: Rmd
 questions:
-- Is there an easier way to access Statistics Denmark
+- "Is there an easier way to access Statistics Denmark"
 
 ---
 
@@ -52,7 +52,7 @@ Previously we retrieved at table with demographic data from Statistics Denmark.
 
 How can we get that table using the danstat package?
 
-Before using the library, we need to install it:
+Before using the library, we will need to install it:
 
 ```{r how-to-install-danstat, eval=F}
 install.packages("danstat")
