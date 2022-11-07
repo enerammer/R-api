@@ -96,8 +96,6 @@ What if we need to retrieve a specific joke? All the jokes has an ID, that
 we can use for that. If we want to find that, we need a bit more information about the joke. We can get that by specifying that we would like the result of our
 GET-request returned as JSON. 
 
-shoutout om json.
-
 
 > ## JSON
 >JSON (JavaScript Object Notation) is a format for structuring, 

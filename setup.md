@@ -107,7 +107,10 @@ installr::updateR(TRUE)
 * After starting RStudio, at the console type:
     - `install.packages("tidyverse")` followed by the enter key. Once this has installed, type: 
     - `install.packages("jsonlite")` followed by the enter key. Once this has installed, type:
-    - `install.packages("zoo")` followed by the enter key. Once this has installed, type:
+    - `install.packages("zoo")` followed by the enter key. Once this has installed,
+type:
+    - `install.packages("httr")` followed by the enter key. Once this has installed,
+type:
     - `install.packages("danstat")` followed by the enter key. All should now be installed.
   
 * Some installations of R may have problems installing it. In that case, try this:
