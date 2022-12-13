@@ -38,11 +38,24 @@ Christian har kunne identificere.
 28. Drik endnu en kop kaffe
 29. Du har nu en fin ny side på adressen: https://kubdatalab.github.io/XXXX/ hvor XXXX er navnet du valgt i punkt 5
 
+30. Du skal nu vælge om du vil lave siden i RMarkdown, eller "blot" Markdown.
+
+Hvis RMarkdwon:
+31. gå til linket fra pkt. 7, og klik på dropdown menuen hvor der står "gh-pages". Skriv "master", eller "main" (eller noget helt tredie) i feltet "Find or create branch". 
+32. Klik på "Create branch: xxxx" hvor xxxx er hvad du nu skrev i punkt 31.
+33. Gå til Settings
+34. Gå til "Branches"
+34. Skift "Default branch" fra "gh-pages" til xxxx fra punkt 32.
+35. Følg #### Hvordan redigerer jegden så? #### herunder. Vælg at forke fra xxxx branchen.
+
+Hvis Markdown
+31. Følg #### Hvordan redigerer jeg den så? #### herunder. Vælg at forke fra gh-pages branchen.
+
 
 #### Hvordan redigerer jeg den så? ####
 Fork siden til dit egen profil på github.
 Lav dine sider i mappen "_episodes". Der er en demoside. Nummerer dem fra 01-introduction via 02-something til hvor mange du nu skal lave.
-Husk at siderne skal skrives i markdown. Med mindre du er ved at lave et R-kursus. Så kan du skrive i R-markdown. Filerne skal så gemmes i mappen 
+Husk at siderne skal skrives i markdown. Med mindre du er ved at lave et R-kursus. Så kan du skrive i R-markdown. Filerne skal så gemmes i mappen _episodes_rmd
 Commit siderne til dit eget repo
 Klik på pull requests
 Etc. Tag evt github kurset

@@ -36,7 +36,7 @@ jobs:
           python3 -m pip install --upgrade pip setuptools wheel pyyaml==5.3.1 requests
 
       - name: Checkout the lesson
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
@@ -44,7 +44,7 @@ jobs:
       - name: Look for R-markdown files
         id: check-rmd
         run: |
-          echo "::set-output name=count::$(shopt -s nullglob; files=($(find . -iname '*.Rmd')); echo ${#files[@]})"
+          echo "count=$(shopt -s nullglob; files=($(find . -iname '*.Rmd')); echo ${#files[@]})" >> $GITHUB_OUTPUT
 
       - name: Set up R
         if: steps.check-rmd.outputs.count != 0
@@ -92,7 +92,7 @@ jobs:
 
       - name: Checkout github pages
         if: ${{ github.event_name == 'push' && steps.check-rmd.outputs.count != 0 && github.ref != 'refs/heads/gh-pages'}}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: gh-pages
