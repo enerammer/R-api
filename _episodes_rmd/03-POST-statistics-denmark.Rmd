@@ -70,7 +70,7 @@ given subject.
 Secondly: 
 We need to provide a body containing search parameters in a format like this:
 
-```{r eval=F}
+```{r body-eksempel eval=F}
 {
    "table": "folk1c"
 }
@@ -79,7 +79,7 @@ We need to provide a body containing search parameters in a format like this:
 Let us look at how to do this, by sending a request to `subjects`.
 
 The endpoint was 
-```{r}
+```{r endpoint-def}
 endpoint <- "http://api.statbank.dk/v1/subjects"
 ```
 
@@ -94,7 +94,7 @@ must be rectangular.
 A list allows us to store basically anything. The reason that we do not use them 
 for everything is that they are a bit more difficult to work with.
 
-```{r}
+```{r our_body}
 our_body <- list(lang = "en", recursive = FALSE, 
                   includeTables = FALSE, subjects = NULL)
 ```
@@ -122,7 +122,7 @@ Now we have the two things we need, an endpoint to send a request, and a body
 containing what we want returned. 
 
 Let us try it:
-```{r}
+```{r hent-resultat-af-post}
 result <- httr::POST(endpoint, body=our_body, encode = "json")
 ```
 
@@ -130,14 +130,14 @@ We ask to get the result in json, a speciel datastructure that is able to contai
 
 Let us look at the result:
 
-```{r}
+```{r vis-resultat}
 result
 ```
 Both informative. And utterly useless. The informative information is that our request succeeded (cave - it might not succeed on this webpage). We can see that in the status. 200 is an internet code for success.
 
 Let us get the content of the result, which is what we actually want:
 
-```{r}
+```{r get-content}
 result %>% 
   content()
 ```
@@ -145,7 +145,7 @@ More informative, but not really easy to read.
 
 The library `jsonlite` has a function that converts this to something readable:
 
-```{r}
+```{r get-content-to-json}
 result %>% 
   content() %>% 
   fromJSON()
@@ -163,7 +163,7 @@ We need to make sure that the number of the subject, `1` is intepreted as it is.
 This is a little bit of mysterious handwaving - we simply put the 1 inside the 
 function `I()` and stuff works.
 
-```{r}
+```{r ny-body}
 our_body <- list(lang = "en", recursive = F, 
                   includeTables = F, subjects = I(1))
 ```
@@ -181,7 +181,7 @@ our_body <- list(lang = "en", recursive = F,
 
 Note that it is important that we tell the POST function that the body is the body:
 
-```{r}
+```{r hent-data-til-json}
 data <- POST(endpoint, body=our_body, encode = "json") %>% 
   content() %>% 
   fromJSON()
@@ -193,7 +193,7 @@ Not that easy to see in this format, but the data frame contains a data frame.
 That is, in the column `subjects` the content is a data frame.
 
 We pick that out using the $-notation:
-```{r}
+```{r vis-subjects}
 data$subjects
 ```
 
@@ -204,13 +204,13 @@ These are the sub-subjects of subject 1.
 Let us look closer at 3401, Population.
 
 Again, we modify the call we send to the endpoint:
-```{r}
+```{r body-til-subject-3401}
 our_body <- list(lang = "en", recursive = F, 
                   includeTables = F, subjects = I(3401))
 ```
 
 
-```{r}
+```{r subject-3401-til-json}
 data <- POST(endpoint, body=our_body, encode = "json") %>% 
   content() %>% 
   fromJSON()
@@ -219,7 +219,7 @@ data
 ```
 
 We delve deeper into it:
-```{r}
+```{r subject-3401-subjects}
 data$subjects
 ```
 
@@ -229,11 +229,11 @@ Next, let us take a look at the tables contained under subject 20021.
 
 We need the next endpoint, which provides information about tables under a subject:
 
-```{r}
+```{r table-endpoint}
 endpoint <- "http://api.statbank.dk/v1/tables"
 ```
 
-```{r}
+```{r subject-20021-tabeller}
 our_body <- list(lang = "en", subjects = I(20021))
 data <- POST(endpoint, body=our_body, encode = "json") %>% 
   content() %>% 
@@ -244,11 +244,11 @@ data %>% head()
 There are 21 tables under this subject. Let us see what information we can get about table "FOLK1A":
 
 We now need the third endpoint:
-```{r}
+```{r tableinfo-endpoint}
 endpoint <- "http://api.statbank.dk/v1/tableinfo"
 ```
 
-```{r}
+```{r table-info-metadata}
 our_body <- list(lang = "en", table = "FOLK1A")
 data <- POST(endpoint, body=our_body, encode = "json") %>% 
   content() %>% 
@@ -277,13 +277,13 @@ These data provides useful information for constructing the final call to the AP
 
 We will now need the final endpoint:
 
-```{r}
+```{r data-endpoint}
 endpoint <- "http://api.statbank.dk/v1/data"
 ```
 
 And we will need to specify which information, from which table, we want data in the body of the request. That is a bit more complicated. We need to make a list of lists!
 
-```{r}
+```{r data-variable}
 variables <- list(list(code = "OMRÅDE", values = I("*")),
                   list(code = "CIVILSTAND", values = I(c("U", "G", "E", "F"))),
                   list(code = "Tid", values = I("*"))
@@ -293,20 +293,15 @@ our_body <- list(table = "FOLK1A", lang = "en", format = "CSV", variables = vari
 
 ```
 
-The final endpoint is:
 
-```{r}
-endpoint <- "https://api.statbank.dk/v1/data"
-```
+The final call boils down to:
 
-And the call:
-
-```{r}
+```{r final-data-call}
 data <- POST(endpoint, body=our_body, encode = "json")
 ```
 
 The data is returned as csv - we defined that in "our_body", so we now need to extract it a bit differently:
-```{r}
+```{r vis-final-data}
 data <- data %>% 
   content(type = "text") %>% 
   read_csv2()
