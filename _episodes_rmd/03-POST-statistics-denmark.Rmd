@@ -70,7 +70,7 @@ given subject.
 Secondly: 
 We need to provide a body containing search parameters in a format like this:
 
-```{r body-eksempel eval=F}
+```{r body-eksempel, eval=F}
 {
    "table": "folk1c"
 }
