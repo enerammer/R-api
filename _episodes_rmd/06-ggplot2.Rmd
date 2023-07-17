@@ -58,7 +58,7 @@ SD_data <- read_csv2("../data/SD_data.csv")
 We read in data from a csv-file. That is stored as text, so we need to convert
 the "TID" column to something that can be understood as time by R:
 
-```{r}
+```{r mutate-to-quarters}
 SD_data <- SD_data %>% mutate(TID = yearquarter(TID))
 ```
 
@@ -136,7 +136,7 @@ We could have done that when we extracted the data from Statistics Denmark.
 Alternatively we can do it now.
 Let us pull out all the regions.
 
-```{r}
+```{r filter-to-region}
 plot_data <- SD_data %>% 
   filter(str_detect(OMRÅDE, "Region"))
 ```
@@ -314,7 +314,7 @@ Rather than using the default "count" of values, we can use the values directly.
 In that case, we need to provide both the x- and the y-values; ggplot
 does not calculate them!
 
-```{r}
+```{r barplot-identity}
 plot_data %>% ggplot(aes(CIVILSTAND, INDHOLD)) +
   geom_bar(stat="identity")
 ```
@@ -330,7 +330,7 @@ TID == yearquarter("2008 Q1") picks out the rows containing data from
 the first quarter of 2008. Note that we have to convert "2008 Q1" to the 
 same datatype as is contained in the columns, using the yearquarter() function.
 
-```{r}
+```{r barplot-quarters}
 
 plot_data %>% 
   filter(str_detect(OMRÅDE, "Region"),
@@ -343,7 +343,7 @@ of divorced persons in ALL the regions.
 
 We can color bars by region:
 
-```{r}
+```{r color-by-region}
 plot_data %>% 
   filter(str_detect(OMRÅDE, "Region"),
          TID == yearquarter("2008 Q1")) %>% 
@@ -355,7 +355,7 @@ Oops! Color only colors the outline of the bars. We can do better.
 We can use the `fill` aesthetic for the `geom_bar()` geom to colour bars by
 the portion of each count that is from each OMRÅDE.
 
-```{r}
+```{r fill-vs-color}
 plot_data %>% 
   filter(str_detect(OMRÅDE, "Region"),
          TID == yearquarter("2008 Q1")) %>% 
@@ -370,7 +370,7 @@ correspond to each OMRÅDE and put them side-by-side by using the `position`
 argument for `geom_bar()` and setting it to "dodge".
 
 
-```{r}
+```{r dodge}
 plot_data %>% 
   filter(str_detect(OMRÅDE, "Region"),
          TID == yearquarter("2008 Q1")) %>% 
@@ -398,7 +398,7 @@ The `labs` function takes the following arguments:
 - `...` -- any pair of name and value for aesthetics used in the plot (e.g., 
 `x`, `y`, `fill`, `color`, `size`)
 
-```{r}
+```{r labels-demo}
 plot_data %>% 
   filter(str_detect(OMRÅDE, "Region"),
          TID == yearquarter("2008 Q1")) %>% 
