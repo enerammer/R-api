@@ -13,7 +13,7 @@ source: Rmd
 ---
 
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 source("../bin/chunk-options.R")
 knitr_fig_path("05-")
 source("../bin/download_data.R")
@@ -37,12 +37,15 @@ marriage status and geographical area. And time.
 
 If the data is not still in memory, we can read it in:
 
-```{r}
+```{r read-data-hidden, echo = F}
 data <- read_csv2("../data/SD_data.csv")
 ```
 
+```{r read-data-shown, eval = F}
+data <- read_csv2("data/SD_data.csv")
+```
 
-```{r}
+```{r head-of-data}
 head(data)
 ```
 
@@ -55,13 +58,13 @@ lubridate is a package written to make working with dates and times easy(er).
 
 It may need to be installed first.
 
-```{r eval=F}
+```{r lubridate-install, eval=F}
 install.packages("lubridate")
 ```
 
 
 After that, we can load it:
-```{r}
+```{r load-lubridate}
 library(lubridate)
 ```
 
@@ -79,7 +82,7 @@ And variations of these, especially ymd.
 ymd("2021-09-21") converts the date 2020-09-21 to a date-format that R can 
 understand:
 
-```{r}
+```{r ymd}
 ymd("2021-09-21")
 ```
 
@@ -88,12 +91,12 @@ Sometimes we have dates formatted as "21-09-2021". That is day, month and year
 in that order.
 
 That can be converted to at standard date-format with the function dmy():
-```{r}
+```{r dmy}
 dmy("21-09-2021")
 ```
 We might even have dates formatted as "2021 21 4", (year, day month), the
 function ydm() can handle that.
-```{r}
+```{r ydm}
 ydm("2021 21 4")
 ```
 
@@ -125,18 +128,18 @@ The library tsibble provides functions that can convert "2020Q1", the first
 quarter of 2020, into something R can understand as time-value:
 
 We might need to install it first:
-```{r eval=F}
+```{r install-tsibble, eval=F}
 install.packages("tsibble")
 ```
 
 And then load it:
-```{r}
+```{r load-tsibble}
 library(tsibble)
 ```
 
 This is a vector containg the 8 quarters of the years 2019 and 2020.
 
-```{r}
+```{r define-quarters}
 quarters <- c("2019Q1", "2019Q2", "2019Q3", "2019Q4", "2020Q1", "2020Q2", "2020Q3", "2020Q4")
 class(quarters)
 ```
@@ -145,7 +148,7 @@ It is a character vector, ie strings. If we want to analyse any data
 associated with these specific quarters, we need to convert them to something 
 R is able to recognize as time.
 
-```{r}
+```{r show-quarters}
 yearquarter(quarters)
 ```
 
@@ -154,7 +157,7 @@ time-series. The generic lubridate functions and yearquarter() will be enough fo
 our purposes.
 
 Let us finish by converting the "TID" column in our data, to a time-format.
-```{r}
+```{r mutate-quarters}
 data <- data %>% 
   mutate(TID = yearquarter(TID))
 ```
@@ -164,8 +167,8 @@ column "TID". And now we have a data frame that we can do interesting things
 with.
 
 Now might be a good time to save the data in its new version:
-```{r eval=F}
-write_csv2(data, "../data/SD_data.csv")
+```{r save-data, eval=F}
+write_csv2(data, "data/SD_data.csv")
 ```
 
 Note that we are using write_csv2() here. We do not have decimalpoints in this
