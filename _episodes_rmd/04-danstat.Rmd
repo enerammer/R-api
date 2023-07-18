@@ -115,7 +115,7 @@ sub_subjects$subjects
 Those sub-subjects have their own subjects! Lets get to the bottom of this, and
 use 2401, Population and population projections as an example:
 
-```{r}
+```{r even-more-subjects}
 sub_sub_subjects <- get_subjects("3401")
 sub_sub_subjects$subjects
 ```
@@ -140,7 +140,7 @@ If we go all the way to the bottom, we will get a dataframe, containing several
 dataframes, each of those containing several dataframes. 
 
 We recommend that you do not try it, but this is how it is done:
-```{r}
+```{r lots-of-subjects}
 lots_of_subjects <- get_subjects(1, recursive = T, include_tables = T)
 ```
 
@@ -199,7 +199,7 @@ column.
 
 The same trick can be done for the other fields in the table:
 
-```{r}
+```{r municipalites}
 metadata %>% 
   slice(1) %>% 
   pull(values) %>% 
@@ -233,7 +233,7 @@ that we want all values of "OMRÅDE".
 As before, we need to specify what we want using a list. 
 Let us make our first list:
 
-```{r}
+```{r first-list}
 list(code = "OMRÅDE", values = NA)
 ```
   
@@ -250,7 +250,7 @@ Let us assume that we also want to break down the data based on marriage status.
 That information is stored in the variable "CIVILSTAND".
 
 And above, we saw that we had the following values in that variable:
-```{r}
+```{r pulling-values}
 metadata %>% 
   slice(4) %>% 
   pull(values)
@@ -260,7 +260,7 @@ A value for the total population is probably not that interesting, if we
 pull all the individual values for "Never married" etc.
 
 We can now make another list:
-```{r}
+```{r civilstand-list}
   list(code = "CIVILSTAND", values = c("U", "G", "E", "F"))
 ```
 
@@ -272,7 +272,7 @@ It might be interesting to take a look at how the population changes over time.
 In that case we need to pull out data from the "Tid" variable.
 
 That would look like this:
-```{r}
+```{r tid-list}
 list(code = "Tid", values = NA)
 ```
 
@@ -283,7 +283,7 @@ list, containing three lists.
 We do that using this code:
 
 
-```{r}
+```{r list-of-lists}
 variables <- list(list(code = "OMRÅDE", values = NA),
                   list(code = "CIVILSTAND", values = c("U", "G", "E", "F")),
                   list(code = "Tid", values = NA)
@@ -293,13 +293,13 @@ variables
 
 And now, finally, we are ready to get the data!
 
-```{r}
+```{r getting-data}
 data <- get_data(table_id = "FOLK1A", variables = variables)
 ```
 It takes a short moment. But now we have a dataframe containing the data we 
 requested:
 
-```{r}
+```{r head-of-data}
 head(data)
 ```
 
@@ -308,9 +308,11 @@ This procedure will work for all the tables from Statistics Denmark!
 The data is nicely formatted and ready to use. Almost.
 
 Before we do anything else, let us save the data.
-```{r}
+```{r write-data-hidden, echo = F}
 write_csv2(data, "../data/SD_data.csv")
 ```
-
+```{r write-data-shown, eval = F}
+write_csv2(data, "data/SD_data.csv")
+```
 
 {% include links.md %}
