@@ -18,6 +18,13 @@ data immediately, they have to interact with the API in order to get to know it.
 Lists is a new concept not covered in the introductory courses held at KUB Datalab.
 Spend some time on it, as we are handling lists containing lists here.
 
+Hint on mouse
+
+Åben windows menuen og tast mus. vælg indstillinger for musen, under systemindstillinger.
+vælg yderligere museindstillinger.
+markør indstillinger - hak af i "vis placeringen af markøren når der trykkes på ctrl-tasten"
+
+![musemarkør](../fig/mousemarker.png)
 
 
 
